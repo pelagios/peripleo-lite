@@ -18,6 +18,7 @@ module.exports = {
     rules: [
       { 
         test: /\.(js|jsx)$/, 
+        exclude: [/node_modules/],
         use: { 
           loader: 'babel-loader' ,
           options: {
@@ -32,7 +33,8 @@ module.exports = {
             ]
           }
         }
-      }
+      },
+      { test: /\.css$/, use: ['style-loader', 'css-loader'] }
     ]
   },
   devtool: 'inline-source-map',
