@@ -1,2 +1,3 @@
-# peripleo-lite
-An experiment at rebooting the good parts about Peripleo without the server-side bloat
+# Peripleo Lite
+
+A JavaScript viewer for geospatial linked data. 
