@@ -11,10 +11,13 @@ const Basemap = props => {
     zoom: 4
   });
 
+  // const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
+  const style = 'https://klokantech.github.io/roman-empire/style.json'
+
   return (
     <ReactMapGL
       {...viewport}
-      mapStyle="https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh"
+      mapStyle={style}
       onViewportChange={setViewport}
     />
   )
