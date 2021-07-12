@@ -1,31 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import CETEIcean from 'CETEIcean';
 import { normalizeURL } from '../store/datasources';
 
 import './TEIView.css';
 
 const TEIView = props => {
-
-  const [ placesInViewport, setPlacesInViewPort ] = useState([]);
-
   const elem = useRef();
+
+  const callback = entries => {
+
+    const distinctURIs = entries => 
+      Array.from(new Set(
+        entries
+          .map(e => e.target.getAttribute('ref'))
+          .filter(attr => attr) // Remove nulls
+          .map(normalizeURL)
+      ))
+      
+    const added = distinctURIs(entries.filter(e => e.isIntersecting));
+    const removed = distinctURIs(entries.filter(e => !e.isIntersecting));
+
+    if (added.length > 0 || removed.length > 0) {
+      const diff = {};
+
+      if (added.length > 0)
+        diff.added = added;
+
+      if (removed.length > 0)
+        diff.removed = removed;
+
+      props.onPlacesChanged(diff);
+    }
+  }
 
   useEffect(() => {
     const tei = new CETEIcean();
     tei.getHTML5(props.tei, data => {
       elem.current.appendChild(data);
 
-      const callback = entries => {
-        const entered = entries.filter(e => e.isIntersecting).map(e => e.target);
-        const exited = entries.filter(e => !e.isIntersecting).map(e => e.target);
-
-        const updated = [
-          ...placesInViewport.filter(elem => !exited.includes(elem)),
-          ...entered 
-        ];
-
-        setPlacesInViewPort(updated);
-      }
+      console.log('init observer');
   
       const options = {
         root: elem.current,
@@ -40,16 +53,6 @@ const TEIView = props => {
       });
     });
   }, []);
-
-  useEffect(() => {
-    const uris = placesInViewport
-      .map(elem => elem.getAttribute('ref'))
-      .filter(str => str) // Remove null
-      .map(normalizeURL);
-
-    const distinct = Array.from(new Set(uris));
-    props.onPlacesChanged(distinct);
-  }, [ placesInViewport ]);
 
   const onClick = evt => {
     const uri = evt.target.getAttribute('ref');

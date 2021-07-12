@@ -1,6 +1,6 @@
 import { normalizeURL } from '.';
 
-export const importLinkedPlaces = (url, ngraph) => 
+export const importLinkedPlaces = (url, ngraph, index) => 
   fetch(url)    
     .then(response => response.json())
     .then(data => {
@@ -12,7 +12,8 @@ export const importLinkedPlaces = (url, ngraph) =>
         const uri = normalizeURL(feature['@id']);
         feature['@id'] = uri;
         
-        ngraph.addNode(uri, feature)
+        ngraph.addNode(uri, feature);
+        index[uri] = feature;
       });
 
       // Add edges next

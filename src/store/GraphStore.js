@@ -23,6 +23,8 @@ export default class GraphStore {
     this.rank = [];
 
     this.sources = {};
+
+    this.index = {};
   }
 
   load(name, url, format) {
@@ -31,7 +33,7 @@ export default class GraphStore {
     let promise = null;
 
     if (format === LINKED_PLACES) {
-      promise = importLinkedPlaces(url, this.graph);
+      promise = importLinkedPlaces(url, this.graph, this.index);
     } else if (format === TEI) {
       // promise = loadTEI(url, this.graph);
     }
@@ -46,6 +48,10 @@ export default class GraphStore {
 
   getSource(name) {
     return this.sources[name];
+  }
+
+  resolve(uris) {
+    return uris.map(uri => ({ uri, resolved: this.index[uri] }));
   }
   
   topPlaces(n) {

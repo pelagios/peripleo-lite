@@ -15,8 +15,7 @@ const Basemap = props => {
     console.log(f);
   }
 
-  /*
-  const markers = props.places.map(f => {
+  const markers = props.markers.map(f => {
     const coords = f.geometry.geometries[0].coordinates;
     return (
       <Marker
@@ -32,7 +31,6 @@ const Basemap = props => {
     )
 
   });
-  */
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
@@ -171,10 +169,12 @@ const Basemap = props => {
       mapStyle={style}
       onViewportChange={setViewport}>
 
+      {markers}
+
       {props.source && 
         <Source id="ToposText" type="geojson" data={props.source}>
-          <Layer {...heatmapLayerStyle} />
-          <Layer {...pointLayerStyle} />
+          {/* <Layer {...heatmapLayerStyle} />
+          <Layer {...pointLayerStyle} /> */}
         </Source>
       }
 

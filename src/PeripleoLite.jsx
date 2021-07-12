@@ -4,10 +4,11 @@ import Basemap from './map/Basemap';
 import TEIView  from './text/TEIView';
 
 import './PeripleoLite.css';
+import AnimatedPlaceView from './AnimatedPlaceView';
 
 const PeripleoLite = () => {
 
-  const [ topPlaces, setTopPlaces ] = useState([]);
+  const [ markers, setMarkers ] = useState([]);
 
   const [ store, setStore ] = useState(new GraphStore());
 
@@ -15,13 +16,17 @@ const PeripleoLite = () => {
     Promise.all([
       store.load('ToposText', 'data/ToposTextGazetteer.json', Format.LINKED_PLACES),
       // store.load('data/pausanias-book1-pt1-gr.xml', Format.TEI)
-    ]).then(() => {
-      setTopPlaces(store.topPlaces(100));
-    });  
+    ]);  
   }, [ store ]);
 
-  const onPlacesChanged = uris=> {
-    console.log('in view', uris);
+  const onPlacesChanged = uris => {
+    // TODO cache
+    const resolved = 
+      store
+        .resolve(uris).filter(({ resolved }) => resolved)
+        .map(({ resolved }) => resolved);
+
+    setMarkers(resolved);
   }
 
   const onSelectPlace = uri => {
@@ -31,12 +36,15 @@ const PeripleoLite = () => {
   return (
     <div className="container">
       <div className="row">
-        <TEIView
-          tei="data/pausanias-book1-pt1-gr.xml" 
-          onPlacesChanged={onPlacesChanged} 
-          onSelectPlace={onSelectPlace} />
+        <AnimatedPlaceView onPlacesChanged={onPlacesChanged}>
+          <TEIView
+            tei="data/pausanias-book1-pt1-gr.xml" 
+            onSelectPlace={onSelectPlace} />
+        </AnimatedPlaceView>
 
-        <Basemap source={store.getSource('ToposText')} />
+        <Basemap 
+          markers={markers}
+          source={store.getSource('ToposText')} />
       </div>
     </div>
   )
