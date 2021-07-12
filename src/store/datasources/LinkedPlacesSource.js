@@ -11,6 +11,7 @@ export const importLinkedPlaces = (url, ngraph, index) =>
         // Normalize
         const uri = normalizeURL(feature['@id']);
         feature['@id'] = uri;
+        feature.properties.uri = uri;
         
         ngraph.addNode(uri, feature);
         index[uri] = feature;

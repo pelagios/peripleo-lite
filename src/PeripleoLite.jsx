@@ -8,9 +8,11 @@ import AnimatedPlaceView from './AnimatedPlaceView';
 
 const PeripleoLite = () => {
 
-  const [ markers, setMarkers ] = useState([]);
+  const [ markers, setMarkers ] = useState(null);
 
   const [ store, _ ] = useState(new GraphStore());
+
+  const [ selected, setSelected ] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -26,23 +28,28 @@ const PeripleoLite = () => {
         .resolve(uris).filter(({ resolved }) => resolved)
         .map(({ resolved }) => resolved);
 
-    setMarkers(resolved);
+    setMarkers({
+      type: 'FeatureCollection',
+      features: resolved
+    });
   }
 
   const onSelectPlace = uri => {
-    console.log('selected', uri);
+    setSelected(uri);
   }
   
   return (
     <div className="container">
       <div className="row">
         <Basemap 
-          markers={markers}
-          source={store.getSource('ToposText')} />
+          source={markers}
+          selected={selected}
+          onSelectPlace={onSelectPlace} />
 
         <AnimatedPlaceView onPlacesChanged={onPlacesChanged}>
           <TEIView
             tei="data/pausanias-book1-pt1-gr.xml" 
+            selected={selected}
             onSelectPlace={onSelectPlace} />
         </AnimatedPlaceView>
       </div>

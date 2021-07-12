@@ -37,8 +37,6 @@ const TEIView = props => {
     const tei = new CETEIcean();
     tei.getHTML5(props.tei, data => {
       elem.current.appendChild(data);
-
-      console.log('init observer');
   
       const options = {
         root: elem.current,
@@ -53,6 +51,18 @@ const TEIView = props => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    // Deselect first
+    elem.current.querySelectorAll('.selected').forEach(elem => {
+      elem.classList.remove('selected');
+    });
+
+    // Select
+    elem.current.querySelectorAll(`tei-placename[ref="${props.selected}"]`).forEach(elem => {
+      elem.classList.add('selected');
+    });
+  }, [ props.selected ]);
 
   const onClick = evt => {
     const uri = evt.target.getAttribute('ref');

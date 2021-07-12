@@ -12,6 +12,11 @@
   font-size:17px;
 }
 
+.p6o-teiview .selected {
+  background-color:red !important;
+  color:#fff !important;
+}
+
 tei-div[subtype="chapter"]::before {
   content: "Chapter " attr(n);
 }
