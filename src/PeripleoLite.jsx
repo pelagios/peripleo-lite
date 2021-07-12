@@ -10,12 +10,12 @@ const PeripleoLite = () => {
 
   const [ markers, setMarkers ] = useState([]);
 
-  const [ store, setStore ] = useState(new GraphStore());
+  const [ store, _ ] = useState(new GraphStore());
 
   useEffect(() => {
     Promise.all([
       store.load('ToposText', 'data/ToposTextGazetteer.json', Format.LINKED_PLACES),
-      // store.load('data/pausanias-book1-pt1-gr.xml', Format.TEI)
+      store.load('Pleiades', 'data/pleiades-places-latest.json', Format.LINKED_PLACES)
     ]);  
   }, [ store ]);
 
@@ -36,15 +36,15 @@ const PeripleoLite = () => {
   return (
     <div className="container">
       <div className="row">
+        <Basemap 
+          markers={markers}
+          source={store.getSource('ToposText')} />
+
         <AnimatedPlaceView onPlacesChanged={onPlacesChanged}>
           <TEIView
             tei="data/pausanias-book1-pt1-gr.xml" 
             onSelectPlace={onSelectPlace} />
         </AnimatedPlaceView>
-
-        <Basemap 
-          markers={markers}
-          source={store.getSource('ToposText')} />
       </div>
     </div>
   )

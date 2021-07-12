@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactMapGL, { Layer, Marker, Source } from 'react-map-gl';
+import centroid from '@turf/centroid';
 
 const Basemap = props => {
 
@@ -15,26 +16,6 @@ const Basemap = props => {
     console.log(f);
   }
 
-  const markers = props.markers.map(f => {
-    const coords = f.geometry.geometries[0].coordinates;
-    return (
-      <Marker
-        key={f['@id']} 
-        longitude={coords[0]}
-        latitude={coords[1]} 
-        offsetTop={-26}
-        offsetLeft={-10}
-        captureClick>
-
-        <img onClick={onClickMarker(f)} src="mapbox-marker-icon-20px-red.png" />
-      </Marker>
-    )
-
-  });
-
-  const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
-  // const style = 'https://klokantech.github.io/roman-empire/style.json'
-
   const layerStyle = {
     id: 'point',
     type: 'circle',
@@ -43,6 +24,33 @@ const Basemap = props => {
       'circle-color': 'rgba(255, 0, 0, 0.3)'
     }
   };
+
+  const markers = props.markers.filter(f => f.geometry).map(f => {
+    try {
+      const coords = centroid(f.geometry).geometry.coordinates;
+  
+      return (
+        <Marker
+          key={f['@id']} 
+          longitude={coords[0]}
+          latitude={coords[1]} 
+          offsetTop={-26}
+          offsetLeft={-10}
+          captureClick>
+
+          <img onClick={onClickMarker(f)} src="mapbox-marker-icon-20px-red.png" />
+        </Marker>
+      )
+    } catch (error) {
+      console.log(f);
+    }
+
+  });
+
+  const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
+  // const style = 'https://klokantech.github.io/roman-empire/style.json'
+
+
 
   const heatmapLayerStyle = {
     'id': 'earthquakes-heat',

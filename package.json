@@ -31,6 +31,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@turf/centroid": "^6.5.0",
     "brotli-wasm": "^1.0.0",
     "brotli-webpack-plugin": "^1.1.0",
     "CETEIcean": "^1.4.0",
