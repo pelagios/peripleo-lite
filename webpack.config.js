@@ -1,6 +1,7 @@
 const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BrotliPlugin = require('brotli-webpack-plugin');
 
 module.exports = {
   entry: './src/index.jsx',
@@ -37,9 +38,12 @@ module.exports = {
       { test: /\.css$/, use: ['style-loader', 'css-loader'] }
     ]
   },
+  experiments: {
+    asyncWebAssembly: true
+  },
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: './dist',
+    contentBase: './public',
     open: true,
     port: 3000,
     hot: true
@@ -49,5 +53,11 @@ module.exports = {
       inject: 'head',
       template: './public/index.html'
     }),
+    new BrotliPlugin({
+			asset: '[path].br[query]',
+			test: /\.(json|xml)$/,
+			threshold: 10240,
+			minRatio: 0.8
+		})
   ]
 };
