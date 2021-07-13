@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import ReactMapGL, { Layer, Marker, Source } from 'react-map-gl';
-import centroid from '@turf/centroid';
+import React, { useEffect, useState } from 'react';
+import ReactMapGL, { Layer, Source } from 'react-map-gl';
 
 const Basemap = props => {
 
@@ -11,6 +10,21 @@ const Basemap = props => {
     longitude: 16.4,
     zoom: 4
   });
+
+  const [ selected, setSelected ] = useState();
+
+  useEffect(() => {
+    if (props.selected) {
+      const { resolved } = props.store.resolve([ props.selected ])[0];
+      setSelected(resolved);
+    } else {
+      setSelected(null);
+    }
+  }, [ props.selected ]);
+
+  useEffect(() => {
+    console.log('select feature: ', selected);
+  }, [ selected ]);
 
   const points = {
     type: 'FeatureCollection',
@@ -49,6 +63,25 @@ const Basemap = props => {
     }
   };
 
+  const pointLayerStyleSelected = {
+    'type': 'circle',
+    'paint': {
+      ...pointLayerStyle.paint,
+      'circle-radius': 18,
+      'circle-blur': 0.8,
+      'circle-color': '#000000',
+      'circle-stroke-color': '#000000'
+    }
+  }
+
+  const polyLayerStyleSelected = {
+    'type': 'fill',
+    'paint': {
+      'fill-color': '#000000',
+      'fill-opacity': 0.4
+    }
+  }
+
   return (
     <ReactMapGL
       {...viewport}
@@ -66,6 +99,14 @@ const Basemap = props => {
           </Source>
         </>
       }
+
+      <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
+        <Layer {...pointLayerStyleSelected} />
+      </Source>
+
+      <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
+        <Layer id="l-sel-pl" {...polyLayerStyleSelected} /> 
+      </Source>
 
     </ReactMapGL>
   )

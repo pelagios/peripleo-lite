@@ -35,6 +35,7 @@ const PeripleoLite = () => {
   }
 
   const onSelectPlace = uri => {
+    console.log(uri);
     setSelected(uri);
   }
   
@@ -42,6 +43,7 @@ const PeripleoLite = () => {
     <div className="container">
       <div className="row">
         <Basemap 
+          store={store}
           source={markers}
           selected={selected}
           onSelectPlace={onSelectPlace} />
