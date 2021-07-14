@@ -48,7 +48,11 @@ const Basemap = props => {
   const pointLayerStyle = {
     'type': 'circle',
     'paint': {
-      'circle-radius': 4,
+      'circle-radius': [
+        '*',
+        4,
+        [ 'number', ['get', 'occurrences' ], 1 ]
+      ],
       'circle-stroke-width': 1,
       'circle-color': '#ff623b',
       'circle-stroke-color': '#8d260c'
