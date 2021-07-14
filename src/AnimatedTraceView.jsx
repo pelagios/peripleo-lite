@@ -6,6 +6,7 @@ export default class AnimatedPlaceView extends Component {
     super(props);
 
     this.state = {
+      annotations: [],
       places: [],
       isMounted: false
     }
@@ -15,9 +16,18 @@ export default class AnimatedPlaceView extends Component {
     this.setState({ isMounted: true });
   }
 
-  onPlacesChanged = ({ added, removed }) => {
-    const updated = new Set([ ...this.state.places ]);
+  onAnnotationsChanged = ({ entered, left }) => {
+    const updatedAnnotations = [ 
+      ...this.state.annotations.filter(a => !left.includes(a)),
+      ...entered
+    ];
 
+    this.setState({ annotations: updatedAnnotations }, () => {
+      if (this.state.isMounted)
+        this.props.onAnnotationsChanged(updatedAnnotations);
+    });
+
+    /*
     if (removed)
       removed.forEach(uri => updated.delete(uri));
   
@@ -28,11 +38,12 @@ export default class AnimatedPlaceView extends Component {
       if (this.state.isMounted)
         this.props.onPlacesChanged(Array.from(updated));
     });
+    */
   }
 
   render() {
     return React.Children.map(this.props.children, child =>
-      React.cloneElement(child, { onPlacesChanged: this.onPlacesChanged }));
+      React.cloneElement(child, { onAnnotationsChanged: this.onAnnotationsChanged }));
   }
 
 }

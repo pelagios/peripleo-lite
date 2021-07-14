@@ -36,7 +36,7 @@ export default class GraphStore {
     if (format === LINKED_PLACES) {
       promise = importLinkedPlaces(url, this.graph, this.index);
     } else if (format === LINKED_TRACES) {
-      promise = importLinkedTraces(url, this.graph);
+      promise = importLinkedTraces(url, this.graph, this.index);
     }
 
     return promise.then(geojson => {

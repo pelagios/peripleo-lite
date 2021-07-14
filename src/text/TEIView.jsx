@@ -9,13 +9,35 @@ const TEIView = props => {
 
   const callback = entries => {
 
+    /*
     const distinctURIs = entries => 
       Array.from(new Set(
         entries
           .map(e => e.target.getAttribute('ref'))
           .filter(attr => attr) // Remove nulls
           .map(normalizeURL)
-      ))
+      ));
+    */
+
+    // Split entries into entered vs. left 
+    const entriesEntered = entries.filter(e => e.isIntersecting);
+    const entriesLeft = entries.filter(e => !e.isIntersecting);
+
+    // Resolve entered/left annotations from store
+    const resolveAnnotations = entries => entries.map(entry => {
+      const uri = props.base + entry.target.id.substring(1);
+      return props.store.resolve([ uri ])[0].resolved;
+    }).filter(e => e); // Remove unresolved;
+
+    const annotationsEntered = resolveAnnotations(entriesEntered);
+    const annotationsLeft = resolveAnnotations(entriesLeft);
+
+    props.onAnnotationsChanged({
+      entered: annotationsEntered,
+      left: annotationsLeft
+    });
+
+    /*
       
     const added = distinctURIs(entries.filter(e => e.isIntersecting));
     const removed = distinctURIs(entries.filter(e => !e.isIntersecting));
@@ -31,6 +53,7 @@ const TEIView = props => {
 
       props.onPlacesChanged(diff);
     }
+    */
   }
 
   useEffect(() => {

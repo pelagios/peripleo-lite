@@ -1,6 +1,6 @@
 import { normalizeURL } from '.';
 
-export const importLinkedTraces = (url, ngraph) => {
+export const importLinkedTraces = (url, ngraph, index) => {
 
   const fAnnotations = fetch(url)
     .then(response => response.json())
@@ -11,6 +11,7 @@ export const importLinkedTraces = (url, ngraph) => {
         // Add this annotation as a node
         const uri = annotation.id; // http://recogito.humlab.umu.se/annotation/1e14d9db-3e1f-4656-a4ec-b6de7a41f277
         ngraph.addNode(uri, annotation);
+        index[uri] = annotation;
 
         const places = annotation.body.filter(b => (
             b.type === 'SpecificResource' && 
