@@ -2,6 +2,7 @@ import createGraph from 'ngraph.graph';
 import pagerank from 'ngraph.pagerank';
 
 import { importLinkedPlaces } from './datasources/LinkedPlacesSource';
+import { importLinkedTraces } from './datasources/LinkedTracesSource';
 
 const computePagerank = graph => {
   const rank = pagerank(graph);
@@ -27,15 +28,15 @@ export default class GraphStore {
     this.index = {};
   }
 
-  load(name, url, format) {
-    const { LINKED_PLACES, TEI } = Format;
+  loadSource(name, format, url) {
+    const { LINKED_PLACES, LINKED_TRACES } = Format;
 
     let promise = null;
 
     if (format === LINKED_PLACES) {
       promise = importLinkedPlaces(url, this.graph, this.index);
-    } else if (format === TEI) {
-      // promise = loadTEI(url, this.graph);
+    } else if (format === LINKED_TRACES) {
+      promise = importLinkedTraces(url, this.graph);
     }
 
     return promise.then(geojson => {
@@ -77,5 +78,5 @@ export default class GraphStore {
 
 export const Format = {
   LINKED_PLACES: 'LINKED_PLACES',
-  TEI: 'TEI'
+  LINKED_TRACES: 'LINKED_TRACES'
 }

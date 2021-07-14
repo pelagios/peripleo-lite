@@ -15,10 +15,9 @@ const PeripleoLite = () => {
   const [ selected, setSelected ] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      store.load('ToposText', 'data/ToposTextGazetteer.json', Format.LINKED_PLACES),
-      store.load('Pleiades', 'data/pleiades-places-latest.json', Format.LINKED_PLACES)
-    ]);  
+    store.loadSource('ToposText', Format.LINKED_PLACES, 'data/ToposTextGazetteer.json'),
+    store.loadSource('Pleiades',  Format.LINKED_PLACES, 'data/pleiades-places-latest.json'),
+    store.loadSource('Pausanias', Format.LINKED_TRACES, 'data/pausanias-book1-gr.jsonld')
   }, [ store ]);
 
   const onPlacesChanged = uris => {
