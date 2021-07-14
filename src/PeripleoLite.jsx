@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GraphStore, { Format } from './store/GraphStore';
 import Basemap from './map/Basemap';
 import TEIView  from './text/TEIView';
@@ -6,16 +6,21 @@ import AnimatedTraceView from './AnimatedTraceView';
 import { getPlaces } from './store/Annotation';
 
 import './PeripleoLite.css';
+import InfoPanel from './infopanel/InfoPanel';
 
 const PeripleoLite = () => {
 
   const [ markers, setMarkers ] = useState(null);
+
+  const [ requiredTag, setRequiredTag ] = useState('');
 
   const [ loaded, setLoaded ] = useState(false);
 
   const [ store, _ ] = useState(new GraphStore());
 
   const [ selected, setSelected ] = useState(null);
+
+  const elem = useRef();
 
   useEffect(() => {
     Promise.all([
@@ -45,9 +50,17 @@ const PeripleoLite = () => {
     });
   }
 
-  const onSelectPlace = uri => {
-    console.log(uri);
-    setSelected(uri);
+  const onHover = place => {
+    setSelected(place?.properties.uri);
+  }
+
+  const onSetFilter = () => {
+    const f = elem.current.value;
+    if (f) {
+      setRequiredTag(f);
+    } else {
+      setRequiredTag(null);
+    }
   }
   
   return (
@@ -57,18 +70,29 @@ const PeripleoLite = () => {
           store={store}
           source={markers}
           selected={selected}
-          onSelectPlace={onSelectPlace} />
+          onHover={onHover}
+          onSelectPlace={setSelected} />
 
         { loaded && 
-          <AnimatedTraceView onAnnotationsChanged={onAnnotationsChanged}>
+          <AnimatedTraceView 
+            filter={requiredTag}
+            onAnnotationsChanged={onAnnotationsChanged}>
             <TEIView
               tei="data/pausanias-book1-pt1-gr.xml" 
               store={store}
               base="http://recogito.humlab.umu.se/annotation/"
               selected={selected}
-              onSelectPlace={onSelectPlace} />
+              onSelectPlace={setSelected} />
           </AnimatedTraceView>
         }
+      </div>
+
+      { selected && 
+        <InfoPanel place={selected} store={store} />
+      }
+
+      <div className="filter">
+        <input ref={elem} /><button onClick={onSetFilter}>Filter</button>
       </div>
     </div>
   )

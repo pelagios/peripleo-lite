@@ -18,3 +18,7 @@ export const getPlaces = annotations => {
 
   return places;
 }
+
+export const getTags = annotation => annotation.body
+  .filter(b => b.purpose === 'tagging')
+  .map(b => b.value);

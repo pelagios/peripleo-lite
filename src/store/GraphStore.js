@@ -54,6 +54,16 @@ export default class GraphStore {
   resolve(uris) {
     return uris.map(uri => ({ uri, resolved: this.index[uri] }));
   }
+
+  getConnected(uri) {
+    const connected = [];
+
+    this.graph.forEachLinkedNode(uri, (linkedNode, link) => {
+      connected.push(linkedNode);
+    });
+
+    return connected;
+  }
   
   topPlaces(n) {
     const topPlaces = [];

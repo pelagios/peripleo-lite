@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { hasTagFilter } from './Filters';
 
 export default class AnimatedPlaceView extends Component {
 
@@ -22,9 +23,12 @@ export default class AnimatedPlaceView extends Component {
       ...entered
     ];
 
-    this.setState({ annotations: updatedAnnotations }, () => {
+    const filtered = this.props.filter ? 
+      updatedAnnotations.filter(hasTagFilter(this.props.filter)) : updatedAnnotations;
+
+    this.setState({ annotations: filtered }, () => {
       if (this.state.isMounted)
-        this.props.onAnnotationsChanged(updatedAnnotations);
+        this.props.onAnnotationsChanged(filtered);
     });
 
     /*

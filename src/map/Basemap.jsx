@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReactMapGL, { Layer, Source } from 'react-map-gl';
 
 const Basemap = props => {
@@ -12,6 +12,14 @@ const Basemap = props => {
   });
 
   const [ selected, setSelected ] = useState();
+
+  const onHover = useCallback(evt => {
+    const peripleoFeatures = evt.features.filter(f => f.source.startsWith('peripleo'));
+    if (peripleoFeatures.length > 0)
+      props.onHover(peripleoFeatures[0]);
+    else 
+      props.onHover(null);
+  }, []);
 
   useEffect(() => {
     if (props.selected) {
@@ -91,7 +99,8 @@ const Basemap = props => {
       {...viewport}
       mapStyle={style}
       onViewportChange={setViewport}
-      onClick={onClick}>
+      onClick={onClick}
+      onHover={onHover}>
 
       {props.source && 
         <>
@@ -104,13 +113,15 @@ const Basemap = props => {
         </>
       }
 
-      <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
-        <Layer {...pointLayerStyleSelected} />
-      </Source>
+      { selected && 
+        <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
+          <Layer {...pointLayerStyleSelected} />
+        </Source> }
 
-      <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
-        <Layer id="l-sel-pl" {...polyLayerStyleSelected} /> 
-      </Source>
+      { selected && 
+        <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
+          <Layer id="l-sel-pl" {...polyLayerStyleSelected} />
+        </Source> }
 
     </ReactMapGL>
   )
