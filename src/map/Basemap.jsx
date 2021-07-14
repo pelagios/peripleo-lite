@@ -42,8 +42,8 @@ const Basemap = props => {
       props.onSelectPlace(features[0].properties.uri);
   }
 
-  const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
-  // const style = 'https://klokantech.github.io/roman-empire/style.json'
+  // const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
+  const style = 'https://klokantech.github.io/roman-empire/style.json'
 
   const pointLayerStyle = {
     'type': 'circle',
