@@ -1,6 +1,5 @@
 import bbox from '@turf/bbox';
 import { normalizeURL } from '.';
-import Types from '../Types';
 
 const normalizeFeature = (feature, name) => {
   const normalized = { ...feature };
@@ -30,7 +29,7 @@ const getBounds = feature => {
 const toDocument = feature => ({
   id: feature.id,
   title: feature.title,
-  type: Types.PLACE,
+  type: 'Feature',
   dataset: feature.properties.dataset,
   names: feature.names?.map(n => n.toponym)
 })
