@@ -1,7 +1,9 @@
 import createGraph from 'ngraph.graph';
 import RBush from 'rbush';
-import { importLinkedPlaces } from './datasources/LinkedPlacesSource';
-import { importLinkedTraces } from './datasources/LinkedTracesSource';
+import * as JsSearch from 'js-search';
+import Formats from './Formats';
+import { importLinkedPlaces } from './importers/LinkedPlacesImporter';
+import { importLinkedTraces } from './importers/LinkedTracesImporter';
 
 /**
  * The central hub of the system. The store combines:
@@ -19,9 +21,24 @@ import { importLinkedTraces } from './datasources/LinkedTracesSource';
  * 
  * - get graph node (or nodes) by URI(s)
  * - get nodes connected to a specific node
- * - get graph nodes that match a text search (optionally filtered by dataset)
  * - get all graph nodes within given geo bounds (optionally filtered by dataset)
  * - get all nodes for a given dataset
+ * - list the names of all imported datasets
+ * - get graph nodes that match a text search (optionally filtered by dataset)
+ * 
+ * The search index only indexes places and annotation targets, not annotations!
+ * It does not hold copies of the nodes themselves, only descriptive index records.
+ * Index records have the following schema:
+ * 
+ * {
+ *   id: 'unique ID of the node (usually a URI)',
+ *   title: 'a title (mandatory)',
+ *   type: 'an item type (mandatory)',
+ *   dataset: 'the dataset name to which the item belongs (mandatory)',
+ *   description: 'a description (optional)',
+ *   names: 'alternative names of the place or object (optional),
+ * }
+ * 
  */
 export default class Store {
 
@@ -32,74 +49,114 @@ export default class Store {
     // The 2D spatial tree
     this.tree = new RBush();
 
-    this.index = {};
+    // Text search index
+    this.search = new JsSearch.Search('id');
+    this.search.tokenizer = {
+      tokenize(text) {
+        return text
+          .replace(/[.,'"#!$%^&*;:{}=\-_`~()]/g, '')
+          .split(/[\s,-]+/)
+      }
+    };
+
+    this.search.addIndex('title'); 
+    this.search.addIndex('description');
+    this.search.addIndex('names'); 
+
+    // Dataset names
+    this.datasets = [];
   }
 
-  loadSource(name, format, url) {
-    const { LINKED_PLACES, LINKED_TRACES } = Format;
+  /**
+   * Import a dataset into the store, from the given URL.
+   * @param name the name of the dataset 
+   * @param format the format (Formats.LINKED_PLACES or Format.LINKED_TRACES)
+   * @param url URL
+   */
+  importDataset(name, format, url) {
+    const { LINKED_PLACES, LINKED_TRACES } = Formats;
 
     let promise = null;
 
     if (format === LINKED_PLACES) {
-      promise = importLinkedPlaces(url, this.graph, this.index, this.tree);
+      promise = importLinkedPlaces(name, url, this.graph, this.tree, this.search);
     } else if (format === LINKED_TRACES) {
-      promise = importLinkedTraces(url, this.graph, this.index);
+      promise = importLinkedTraces(name, url, this.graph, this.tree, this.search);
+    } else {
+      throw 'Unsupported format: ' + format
     }
 
-    return promise.then(geojson => {
-      // TODO hack
-      // this.sources[name] = geojson;
+    return promise;
+  }
 
-      // this.rank = computePagerank(this.graph);
+  /**
+   * A shorthand to import multiple datasets in one go.
+   * @param list a list of objects { name, format, url }
+   */
+  importDatasets(list) {
+    return Promise.all(list.map(({ name, format, url}) => 
+      this.importDataset(name, format, url)))
+  }
+
+  /** Retrieve node by its ID **/
+  getNode(id) {
+    return this.graph.getNode(id)?.data;
+  }
+
+  /** Resolve a list of URIs in one go **/
+  getNodes(ids) {
+    return ids.map(id => (
+      { id, node: this.graph.getNode(id)?.data }
+    ))
+  }
+
+  /** Get all nodes linked to the given node **/
+  getLinkedNodes(id) {
+    const linkedNodes = [];
+
+    this.graph.forEachLinkedNode(id, (node, link) => {
+      linkedNodes.push({ node, link });
     });
+
+    return linkedNodes;
   }
 
-  getSource(name) {
-    return this.sources[name];
-  }
-
-  resolve(uris) {
-    return uris.map(uri => ({ uri, resolved: this.index[uri] }));
-  }
-
-  getConnected(uri) {
-    const connected = [];
-
-    this.graph.forEachLinkedNode(uri, (linkedNode, link) => {
-      connected.push(linkedNode);
-    });
-
-    return connected;
-  }
-
-  getAll(bounds) {
+  /** 
+   * List all nodes in the given geo bounds, optionally  
+   * filtering by dataset
+   */
+  getNodesInBBox(bounds, optDataset) {
     const [ [ minX, minY ], [ maxX, maxY ]] = bounds;
-    const result = this.tree.search({ minX, minY, maxX, maxY });
-    return result.map(r => r.feature);
-  }
-  
-  topPlaces(n) {
-    const topPlaces = [];
+    
+    // Fetch result from spatial tree
+    const result = this.tree.search({ minX, minY, maxX, maxY })
+      .map(r => r.feature);
 
-    let idx = 0;
-    let node = null;
-
-    while (idx < this.rank.length && topPlaces.length < n) {
-      node = this.graph.getNode(this.rank[idx].nodeId);
-
-      // Check if this node has geometry
-      if (node.data?.geometry)
-        topPlaces.push(node.data);
-
-      idx++;
-    }
-
-    return topPlaces;
+    return optDataset ? result.filter(r => r.dataset === optDataset) : result;
   }
 
-}
+  listAllNodes(dataset) {
+    const nodes = [];
 
-export const Format = {
-  LINKED_PLACES: 'LINKED_PLACES',
-  LINKED_TRACES: 'LINKED_TRACES'
+    this.graph.forEachNode(node => {
+      if (dataset) {
+        if (node.data.dataset === dataset)
+          nodes.push(nodes);
+      } else { 
+        nodes.push(nodes);
+      }
+    });
+
+    return nodes;
+  }
+
+  listDatasets() {
+    return this.datasets.slice();
+  }
+
+  searchNodes(query) {
+    // TODO
+    return this.search.search(query);
+  }
+
 }

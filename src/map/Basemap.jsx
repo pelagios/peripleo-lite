@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
 import { useDebounce } from 'use-debounce';
+import centroid from '@turf/centroid';
 
 const Basemap = props => {
 
@@ -45,7 +46,7 @@ const Basemap = props => {
 
   useEffect(() => {
     if (props.selected) {
-      const { resolved } = props.store.resolve([ props.selected ])[0];
+      const resolved = props.store.getNode(props.selected);
       setSelected(resolved);
     } else {
       setSelected(null);
@@ -58,12 +59,15 @@ const Basemap = props => {
 
   const points = {
     type: 'FeatureCollection',
-    features: props.source?.features.filter(f => f.geometry?.type === 'Point') || []
+    features: props.source?.features.map(f => {
+      return f.geometry ?
+        { ...f, ...{ geometry: centroid(f).geometry } } : f
+      })
   }
 
   const shapes = {
     type: 'FeatureCollection',
-    features: props.source?.features.filter(f => f.geometry?.type !== 'Point') || []
+    features: [] // props.source?.features.filter(f => f.geometry?.type !== 'Point') || []
   }
 
   const onClick = evt => {
@@ -79,9 +83,11 @@ const Basemap = props => {
     'type': 'circle',
     'paint': {
       'circle-radius': [
-        '*',
-        4,
-        [ 'number', ['get', 'occurrences' ], 1 ]
+        'interpolate',
+        [ 'linear' ],
+        ['get', 'occurrences' ],
+        1, 5,
+        5, 12
       ],
       'circle-stroke-width': 1,
       'circle-color': '#ff623b',
@@ -100,9 +106,31 @@ const Basemap = props => {
   const everythingStyle = {
     'type': 'circle',
     'paint': {
-      'circle-radius': 5,
-      'circle-stroke-width': 0,
-      'circle-color': '#00cc00'
+      'circle-radius': [
+        'interpolate',
+        [ 'linear' ],
+        [ 'zoom' ],
+        3, 2,
+        16, 8
+      ],
+      'circle-stroke-width': [
+        'interpolate',
+        [ 'linear' ],
+        [ 'zoom' ],
+        3, 0,
+        16, 1
+      ],
+      'circle-stroke-color': '#880000',
+      'circle-color': '#ff0000',
+      'circle-opacity': [
+        'interpolate',
+        [ 'exponential', 0.5 ],
+        [ 'zoom' ],
+        10, 
+        0.5,
+        18,
+        1
+      ]
     }
   };
 

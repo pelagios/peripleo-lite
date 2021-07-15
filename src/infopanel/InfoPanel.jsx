@@ -1,9 +1,9 @@
 import React from 'react';
-import { getTags } from '../store/Annotation';
+import { getTags } from '../Annotation';
 
 const InfoPanel = props => {
 
-  const place = props.store.resolve([ props.place ])[0].resolved;
+  const place = props.store.getNode(props.place).node;
 
   const connected = props.store.getConnected(props.place).map(c => c.data);
 

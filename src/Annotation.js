@@ -4,7 +4,7 @@ export const getPlaces = annotations => {
   annotations.forEach(annotation => {
     const placeUris = annotation.body.filter(b => (
         b.type == 'SpecificResource' && 
-        b.purpose == 'identifying' && 
+        (b.purpose == 'identifying' || b.purpose == 'linking') && 
         b.value 
       )).map(b => b.value);
 

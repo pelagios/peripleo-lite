@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import CETEIcean from 'CETEIcean';
-import { normalizeURL } from '../store/datasources';
+import { normalizeURL } from '../store/importers';
 
 import './TEIView.css';
 
@@ -26,7 +26,7 @@ const TEIView = props => {
     // Resolve entered/left annotations from store
     const resolveAnnotations = entries => entries.map(entry => {
       const uri = props.base + entry.target.id.substring(1);
-      return props.store.resolve([ uri ])[0].resolved;
+      return props.store.getNode(uri);
     }).filter(e => e); // Remove unresolved;
 
     const annotationsEntered = resolveAnnotations(entriesEntered);
