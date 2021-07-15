@@ -1,6 +1,7 @@
 import { normalizeURL } from '.';
+import bbox from '@turf/bbox';
 
-export const importLinkedPlaces = (url, ngraph, index) => 
+export const importLinkedPlaces = (url, ngraph, index, spatialTree) => 
   fetch(url)    
     .then(response => response.json())
     .then(data => {
@@ -15,6 +16,16 @@ export const importLinkedPlaces = (url, ngraph, index) =>
         
         ngraph.addNode(uri, feature);
         index[uri] = feature;
+
+        if (feature.geometry) {
+          if (feature.geometry.type === 'Point') {
+            const [ x, y ] = feature.geometry.coordinates;
+            spatialTree.insert({ minX: x, minY: y, maxX: x, maxY: y, feature });
+          } else {
+            const [ minX, minY, maxX, maxY ] = bbox(feature);
+            spatialTree.insert({ minX, minY, maxX, maxY, feature });
+          }
+        } 
       });
 
       // Add edges next

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import ReactMapGL, { Layer, Source } from 'react-map-gl';
+import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
+import { useDebounce } from 'use-debounce';
 
 const Basemap = props => {
 
@@ -12,6 +13,27 @@ const Basemap = props => {
   });
 
   const [ selected, setSelected ] = useState();
+
+  const [ debouncedViewport ] = useDebounce(viewport, 1000);
+
+  const [ everything, setEverything ] = useState(null);
+
+  const getEverything = useCallback(viewport => {
+    const bounds = new WebMercatorViewport(viewport).getBounds();
+
+    return {
+      'type': 'FeatureCollection',
+      'features': props.store.getAll(bounds)
+    };
+  });
+
+  useEffect(() => {
+    if (props.showEverything) {
+      setEverything(getEverything(debouncedViewport));
+    } else {
+      setEverything(null);
+    }   
+  }, [ props.showEverything, debouncedViewport ]);
 
   const onHover = useCallback(evt => {
     const peripleoFeatures = evt.features.filter(f => f.source.startsWith('peripleo'));
@@ -75,6 +97,15 @@ const Basemap = props => {
     }
   };
 
+  const everythingStyle = {
+    'type': 'circle',
+    'paint': {
+      'circle-radius': 5,
+      'circle-stroke-width': 0,
+      'circle-color': '#00cc00'
+    }
+  };
+
   const pointLayerStyleSelected = {
     'type': 'circle',
     'paint': {
@@ -97,6 +128,7 @@ const Basemap = props => {
   return (
     <ReactMapGL
       {...viewport}
+      
       mapStyle={style}
       onViewportChange={setViewport}
       onClick={onClick}
@@ -108,10 +140,16 @@ const Basemap = props => {
             <Layer {...polyLayerStyle} />
           </Source>
           <Source id="peripleo-points" type="geojson" data={points}>
-           <Layer {...pointLayerStyle} />
+          <Layer {...pointLayerStyle} />
           </Source>
         </>
       }
+
+
+      { everything && 
+        <Source type="geojson" data={everything}>
+          <Layer {...everythingStyle} />
+        </Source> }
 
       { selected && 
         <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
