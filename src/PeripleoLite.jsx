@@ -106,8 +106,12 @@ const PeripleoLite = () => {
         <button onClick={onShowEverything}>Show Everything</button>
       </div>
 
-      <div className="filter">
+      {/* <div className="filter">
         <input ref={elem} /><button onClick={onSetFilter}>Filter</button>
+    </div> */}
+
+      <div className="p6o-magic-button">
+        <img src="the-magic-button.svg" />
       </div>
     </div>
   )
