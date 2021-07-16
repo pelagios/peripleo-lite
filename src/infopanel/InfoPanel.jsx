@@ -1,5 +1,5 @@
 import React from 'react';
-import { getTags } from '../Annotation';
+import { tagValues } from '../traces/AnnotationUtils';
 
 const InfoPanel = props => {
 
@@ -10,7 +10,7 @@ const InfoPanel = props => {
   const linkedPlaces = connected.filter(c => c.type === 'Feature');
   const linkedTraces = connected.filter(c => c.type === 'Annotation');
 
-  const tags = linkedTraces.reduce((tags, a) => [...tags, ...getTags(a)], []);
+  const tags = linkedTraces.reduce((tags, a) => [...tags, ...tagValues(a)], []);
   
   return place ? (
     <div className="p6o-infopanel">

@@ -33,8 +33,8 @@ const TEIView = props => {
     const annotationsLeft = resolveAnnotations(entriesLeft);
 
     props.onAnnotationsChanged({
-      entered: annotationsEntered,
-      left: annotationsLeft
+      enteredView: annotationsEntered,
+      leftView: annotationsLeft
     });
 
     /*

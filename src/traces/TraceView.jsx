@@ -11,10 +11,10 @@ export default class TraceView extends Component {
     }
   }
 
-  onAnnotationsChanged = ({ intoView, outOfView }) => {
+  onAnnotationsChanged = ({ enteredView, leftView }) => {
     const updatedAnnotations = [ 
-      ...this.state.annotations.filter(a => !outOfView.includes(a)),
-      ...intoView
+      ...this.state.annotations.filter(a => !leftView.includes(a)),
+      ...enteredView
     ];
 
     // Apply filter, if any

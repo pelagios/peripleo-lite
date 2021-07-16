@@ -3,8 +3,8 @@ import Store from './store/Store';
 import Formats from './store/Formats';
 import Basemap from './map/Basemap';
 import TEIView  from './text/TEIView';
-import AnimatedTraceView from './AnimatedTraceView';
-import { getPlaces } from './Annotation';
+import TraceView from './traces/TraceView';
+import { aggregateLinks } from './traces/AnnotationUtils';
 
 import './PeripleoLite.css';
 import InfoPanel from './infopanel/InfoPanel';
@@ -39,8 +39,10 @@ const PeripleoLite = () => {
   }, [ store ]);
 
   const onAnnotationsChanged = annotations => {
-    const placeCounts = getPlaces(annotations);
+    const linkAggregation = aggregateLinks(annotations);
+    console.log(linkAggregation);
 
+    /*
     const uris = Object.keys(placeCounts);
 
     const places = store.getNodes(uris)
@@ -55,6 +57,7 @@ const PeripleoLite = () => {
       type: 'FeatureCollection',
       features: places
     });
+    */
   }
 
   const onHover = place => {
@@ -86,7 +89,7 @@ const PeripleoLite = () => {
           onSelectPlace={setSelected} />
 
         { loaded && 
-          <AnimatedTraceView 
+          <TraceView 
             filter={requiredTag}
             onAnnotationsChanged={onAnnotationsChanged}>
             <TEIView
@@ -95,7 +98,7 @@ const PeripleoLite = () => {
               base="http://recogito.humlab.umu.se/annotation/"
               selected={selected}
               onSelectPlace={setSelected} />
-          </AnimatedTraceView>
+          </TraceView>
         }
       </div>
 
