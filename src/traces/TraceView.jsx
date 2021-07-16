@@ -6,24 +6,35 @@ export default class TraceView extends Component {
     super(props);
 
     this.state = {
-      annotations: [],
-      places: []
+      allAnnotations: [],
+      filteredAnnotations: []
     }
+  }
+
+  setAnnotationState(annotations, filter) {
+    const filtered = filter ? 
+      annotations.filter(filter) : annotations;
+
+    this.setState({
+      allAnnotations: annotations,
+      filteredAnnotations: filtered
+    }, () => {
+      this.props.onAnnotationsChanged(filtered);
+    });
+  } 
+  
+  componentWillReceiveProps(next) {
+    if (this.props.filter !== next.filter)
+      this.setAnnotationState(this.state.allAnnotations, next.filter);
   }
 
   onAnnotationsChanged = ({ enteredView, leftView }) => {
     const updatedAnnotations = [ 
-      ...this.state.annotations.filter(a => !leftView.includes(a)),
+      ...this.state.allAnnotations.filter(a => !leftView.includes(a)),
       ...enteredView
     ];
 
-    // Apply filter, if any
-    const filtered = this.props.filter ? 
-      updatedAnnotations.filter(this.props.filter) : updatedAnnotations;
-
-    this.setState({ annotations: filtered }, () => {
-      this.props.onAnnotationsChanged(filtered);
-    });
+    this.setAnnotationState(updatedAnnotations, this.props.filter);
   }
 
   render() {

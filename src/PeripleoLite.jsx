@@ -4,6 +4,7 @@ import Formats from './store/Formats';
 import Basemap from './map/Basemap';
 import TEIView  from './text/TEIView';
 import TraceView from './traces/TraceView';
+import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
 
 import './PeripleoLite.css';
@@ -15,7 +16,7 @@ const PeripleoLite = () => {
 
   const [ showEverything, setShowEveryThing ] = useState(false);
 
-  const [ requiredTag, setRequiredTag ] = useState('');
+  const [ tagFilter, setTagFilter ] = useState(null);
 
   const [ loaded, setLoaded ] = useState(false);
 
@@ -62,9 +63,9 @@ const PeripleoLite = () => {
   const onSetFilter = () => {
     const f = elem.current.value;
     if (f) {
-      setRequiredTag(f);
+      setTagFilter(hasTagFilter(f));
     } else {
-      setRequiredTag(null);
+      setTagFilter(null);
     }
   }
 
@@ -85,7 +86,7 @@ const PeripleoLite = () => {
 
         { loaded && 
           <TraceView 
-            filter={requiredTag}
+            filter={tagFilter}
             onAnnotationsChanged={onAnnotationsChanged}>
             <TEIView
               tei="data/pausanias-book1-pt1-gr.xml" 
