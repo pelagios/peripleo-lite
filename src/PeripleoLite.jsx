@@ -4,7 +4,7 @@ import Formats from './store/Formats';
 import Basemap from './map/Basemap';
 import TEIView  from './text/TEIView';
 import TraceView from './traces/TraceView';
-import { aggregateLinks } from './traces/AnnotationUtils';
+import { aggregateLinks } from './AnnotationUtils';
 
 import './PeripleoLite.css';
 import InfoPanel from './infopanel/InfoPanel';
@@ -40,24 +40,19 @@ const PeripleoLite = () => {
 
   const onAnnotationsChanged = annotations => {
     const linkAggregation = aggregateLinks(annotations);
-    console.log(linkAggregation);
 
-    /*
-    const uris = Object.keys(placeCounts);
+    const features = linkAggregation.map(bucket => {
+      const feature = store.getNode(bucket.id);    
 
-    const places = store.getNodes(uris)
-      .filter(p => p.node && p.node.type === 'Feature')
-      .map(p => {
-        const feature = { ...p.node };
-        feature.properties.occurrences = placeCounts[p.id];
-        return feature;
-      });
+      if (feature && feature.type === 'Feature') {
+        const f = { ...feature }; // Clone
+        f.properties.occurrences = bucket.count;
+        f.properties.tags = bucket.tags;
+        return f;
+      } 
+    }).filter(f => f); // Remove unresolved
 
-    setMarkers({
-      type: 'FeatureCollection',
-      features: places
-    });
-    */
+    setMarkers({ type: 'FeatureCollection', features });
   }
 
   const onHover = place => {

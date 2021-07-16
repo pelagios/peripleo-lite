@@ -1,5 +1,5 @@
 import React from 'react';
-import { tagValues } from '../traces/AnnotationUtils';
+import { tagValues } from '../AnnotationUtils';
 
 const InfoPanel = props => {
 
