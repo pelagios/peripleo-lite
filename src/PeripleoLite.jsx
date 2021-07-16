@@ -6,9 +6,11 @@ import TEIView  from './text/TEIView';
 import TraceView from './traces/TraceView';
 import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
+import InfoPanel from './infopanel/InfoPanel';
+import HUD from './hud/HUD';
 
 import './PeripleoLite.css';
-import InfoPanel from './infopanel/InfoPanel';
+
 
 const PeripleoLite = () => {
 
@@ -108,11 +110,9 @@ const PeripleoLite = () => {
 
       {/* <div className="filter">
         <input ref={elem} /><button onClick={onSetFilter}>Filter</button>
-    </div> */}
+       </div> */}
 
-      <div className="p6o-magic-button">
-        <img src="the-magic-button.svg" />
-      </div>
+      <HUD />
     </div>
   )
 
