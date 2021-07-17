@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Joyride from 'react-joyride';
 import Store from './store/Store';
 import Formats from './store/Formats';
 import Basemap from './map/Basemap';
@@ -74,9 +75,20 @@ const PeripleoLite = () => {
   const onShowEverything = () => {
     setShowEveryThing(!showEverything);
   }
+
+  const jprops = [] /* {
+    target: '.p6o-magic-button',
+    content: 'This is my awesome feature!',
+    disableBeacon: true
+  }]; */
   
   return (
     <div className="container">
+      <Joyride
+        run={true}
+        steps={jprops}
+        stepIndex={0}> </Joyride>
+      
       <div className="row">
         <Basemap 
           store={store}
@@ -110,7 +122,7 @@ const PeripleoLite = () => {
 
       {/* <div className="filter">
         <input ref={elem} /><button onClick={onSetFilter}>Filter</button>
-       </div> */}
+      </div> */}
 
       <HUD />
     </div>
