@@ -14,10 +14,10 @@ const MenuPanel = props => {
       exit={{ opacity: 0, width: 0 }}>
       <ul>
         <li>
-          <button>Colors</button>
+          <button>Categories</button>
         </li>
         <li>
-          <button>Filter</button>
+          <button>Filters</button>
         </li>
         <li>
           <button>Explore Area</button>
