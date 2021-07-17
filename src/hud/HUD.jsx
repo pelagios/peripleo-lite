@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import MenuPanel from './MenuPanel';
 
 import './HUD.scss';
-import MenuPanel from './MenuPanel';
 
 const HUD = props => {
 
@@ -10,7 +10,7 @@ const HUD = props => {
 
   return (
     <div className="p6o-hud">
-      <div className="p6o-magic-button" onClick={() => setIsOpen(!isOpen)}>
+      <div className="p6o-magic-button noselect" onClick={() => setIsOpen(!isOpen)}>
         <motion.img 
           src="the-magic-button.svg" 
           animate={{
@@ -19,7 +19,9 @@ const HUD = props => {
       </div>
 
       <AnimatePresence exitBeforeEnter>
-        {isOpen && <MenuPanel /> }
+        {isOpen && 
+          <MenuPanel />
+        }
       </AnimatePresence>
     </div>
   )

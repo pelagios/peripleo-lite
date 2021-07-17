@@ -10,7 +10,7 @@ import { aggregateLinks } from './AnnotationUtils';
 import InfoPanel from './infopanel/InfoPanel';
 import HUD from './hud/HUD';
 
-import './PeripleoLite.css';
+import './PeripleoLite.scss';
 
 
 const PeripleoLite = () => {
