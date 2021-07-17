@@ -112,13 +112,9 @@ const PeripleoLite = () => {
         }
       </div>
 
-      { selected && 
+      {/* selected && 
         <InfoPanel place={selected} store={store} />
-      }
-
-      <div className="show-everything">
-        <button onClick={onShowEverything}>Show Everything</button>
-      </div>
+      */}
 
       {/* <div className="filter">
         <input ref={elem} /><button onClick={onSetFilter}>Filter</button>
