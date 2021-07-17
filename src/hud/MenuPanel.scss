@@ -1,0 +1,23 @@
+.p6o-hud-menupanel {
+  padding-left:43px;
+  box-sizing:border-box;
+
+  ul{
+    margin:0;
+    padding:0;
+    display:flex;
+    height:100%;
+  }
+
+  li {
+    display:inline-block;
+    flex:1;
+    position:relative;
+
+    button {
+      width:100%;
+      height:100%;
+    }
+  }
+
+}

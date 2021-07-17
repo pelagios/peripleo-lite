@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import './HUD.scss';
 import MenuPanel from './MenuPanel';
@@ -11,7 +11,11 @@ const HUD = props => {
   return (
     <div className="p6o-hud">
       <div className="p6o-magic-button" onClick={() => setIsOpen(!isOpen)}>
-        <img src="the-magic-button.svg" />
+        <motion.img 
+          src="the-magic-button.svg" 
+          animate={{
+            rotate: isOpen ? 90 : 0,
+          }} />
       </div>
 
       <AnimatePresence exitBeforeEnter>
