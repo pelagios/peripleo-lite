@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Stack from './Stack';
+import { motion } from 'framer-motion';
 
 import './MenuPanel.scss';
 
 const MenuPanel = props => {
 
   const [ stackPanels, setStackPanels ] = useState([]);
-
-  const [ isStackOpen, setIsStackOpen ] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setIsStackOpen(true), 150);
@@ -34,14 +31,6 @@ const MenuPanel = props => {
           </li>
         </ul>  
       </motion.div>
-
-      <AnimatePresence exitBeforeEnter>
-        { isStackOpen && 
-          <Stack>
-            {stackPanels}
-          </Stack>
-        }
-      </AnimatePresence>
     </>
   )
 
