@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import MenuPanel from './MenuPanel';
-import Stack from './Stack';
 
 import './HUD.scss';
 
 const HUD = props => {
 
   const [ menuOpen, setMenuOpen ] = useState(false);
+
   const [ stackOpen, setStackOpen ] = useState(false);
+
+  const [ panels, setPanels ] = useState([]);
 
   const toggleControls = () => {
     // Staggered close or open
@@ -19,6 +21,10 @@ const HUD = props => {
       setMenuOpen(true);
       setTimeout(() => setStackOpen(true), 150);
     }
+  }
+
+  const onAddPanel = panel => {
+    setPanels([...panels, panel ]);
   }
 
   return (
@@ -40,12 +46,29 @@ const HUD = props => {
         </div>
 
         <AnimatePresence>
-          {menuOpen && <MenuPanel />}
+          {menuOpen && <MenuPanel onAddPanel={onAddPanel} />}
         </AnimatePresence>
 
-        <AnimatePresence>        
-          {stackOpen && <Stack />}
-        </AnimatePresence>
+        {stackOpen && 
+          <div className="p6o-stack"> 
+            <AnimatePresence>
+              {panels.map((panel, idx) => 
+                <motion.div
+                  key={idx}
+                  className="p6o-stackpanel-wrapper"
+                  transition={{ type: 'spring', duration: 0.4 }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 150 }}
+                  exit={{ opacity: 0, hieght: 0 }}>
+                  
+                  {panel}
+
+                </motion.div>
+            
+              )}
+            </AnimatePresence>
+          </div>
+        }
       </div>
     </div>
   )

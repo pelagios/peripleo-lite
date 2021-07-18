@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 import './MenuPanel.scss';
 
 const MenuPanel = props => {
 
-  const [ stackPanels, setStackPanels ] = useState([]);
-
-  useEffect(() => {
-    setTimeout(() => setIsStackOpen(true), 150);
-  }, []);
-
-  const onAddPanel = panel =>
-    setStackPanels([ ...stackPanels, panel ]);
+  const onAddFilterPanel = () =>
+    props.onAddPanel(
+      <div className="p6o-stackpanel filters"></div>
+    )
 
   return (
     <>
@@ -24,7 +20,7 @@ const MenuPanel = props => {
         exit={{ opacity: 0, width: 0 }}>
         <ul>
           <li>
-            <button>Filters</button>
+            <button onClick={onAddFilterPanel}>Filters</button>
           </li>
           <li>
             <button>Explore Area</button>
