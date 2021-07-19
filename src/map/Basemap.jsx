@@ -104,6 +104,16 @@ const Basemap = props => {
   };
 
   const everythingStyle = {
+    'type': 'fill',
+    'paint': {
+      'fill-color': '#ff0000',
+      'fill-opacity': 0.3,
+      'fill-outline-color': '#000' 
+    }
+  };
+
+  /*
+  const everythingStyle = {
     'type': 'circle',
     'paint': {
       'circle-radius': [
@@ -133,6 +143,7 @@ const Basemap = props => {
       ]
     }
   };
+  */
 
   const pointLayerStyleSelected = {
     'type': 'circle',
