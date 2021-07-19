@@ -13,6 +13,9 @@ const MenuPanel = props => {
         onSetFilter={props.onSetFilter} />
     )
 
+  const onExploreArea = () =>
+    props.onExploreArea();
+
   return (
     <>
       <motion.div
@@ -26,7 +29,7 @@ const MenuPanel = props => {
             <button onClick={onAddFilterPanel}>Filters</button>
           </li>
           <li>
-            <button>Explore Area</button>
+            <button onClick={onExploreArea}>Explore Area</button>
           </li>
         </ul>  
       </motion.div>

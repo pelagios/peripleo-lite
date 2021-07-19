@@ -55,7 +55,8 @@ const HUD = props => {
               store={props.store}
               onAddPanel={onAddPanel} 
               onSetFilter={props.onSetFilter}
-              onClearFilter={props.onClearFilter} />
+              onClearFilter={props.onClearFilter} 
+              onExploreArea={props.onExploreArea} />
           }
         </AnimatePresence>
 

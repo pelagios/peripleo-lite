@@ -16,7 +16,7 @@ const PeripleoLite = () => {
 
   const [ markers, setMarkers ] = useState(null);
 
-  const [ exploreArea, setExploreArea ] = useState(null);
+  const [ exploreArea, setExploreArea ] = useState(false);
 
   const [ tagFilter, setTagFilter ] = useState(null);
 
@@ -68,8 +68,10 @@ const PeripleoLite = () => {
   const onSetFilter = tag =>
     setTagFilter(hasTagFilter(tag));
 
-  const onExploreArea = datasets =>
-    setExploreArea(datasets);
+  const onExploreArea = () => {
+    console.log('ffo');
+    setExploreArea(!exploreArea);
+  }
 
   const tour = [] /* {
     target: '.p6o-magic-button',
@@ -109,6 +111,7 @@ const PeripleoLite = () => {
 
       <HUD 
         store={store} 
+        onExploreArea={onExploreArea}
         onClearFilter={onClearFilter}
         onSetFilter={onSetFilter} />
     </div>

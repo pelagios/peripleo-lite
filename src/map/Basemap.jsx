@@ -24,7 +24,7 @@ const Basemap = props => {
 
     return {
       'type': 'FeatureCollection',
-      'features': props.store.getAll(bounds)
+      'features': props.store.getNodesInBBox(bounds)
     };
   });
 
