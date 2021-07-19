@@ -135,17 +135,29 @@ export default class Store {
     return optDataset ? result.filter(r => r.dataset === optDataset) : result;
   }
 
-  listAllNodes(dataset) {
+  listAllNodes(dataset, type) {
     const nodes = [];
 
-    this.graph.forEachNode(node => {
-      if (dataset) {
-        if (node.data.dataset === dataset)
-          nodes.push(nodes);
-      } else { 
-        nodes.push(nodes);
-      }
-    });
+    if (dataset && type) {
+      this.graph.forEachNode(node => {
+        if (node.data?.dataset === dataset && node.data?.type === type)
+          nodes.push(node);
+      });
+    } else if (dataset) {
+      this.graph.forEachNode(node => {
+        if (node.data?.dataset === dataset)
+          nodes.push(node);
+      });
+    } else if (type) {
+      this.graph.forEachNode(node => {
+        if (node.data?.type === type)
+          nodes.push(node);
+      });
+    } else {
+      this.graph.forEachNode(node => {
+          nodes.push(node);
+      });
+    };
 
     return nodes;
   }

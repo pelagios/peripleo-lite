@@ -7,7 +7,6 @@ import TEIView  from './text/TEIView';
 import TraceView from './traces/TraceView';
 import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
-import InfoPanel from './infopanel/InfoPanel';
 import HUD from './hud/HUD';
 
 import './PeripleoLite.scss';
@@ -17,7 +16,7 @@ const PeripleoLite = () => {
 
   const [ markers, setMarkers ] = useState(null);
 
-  const [ showEverything, setShowEveryThing ] = useState(false);
+  const [ exploreArea, setExploreArea ] = useState(null);
 
   const [ tagFilter, setTagFilter ] = useState(null);
 
@@ -63,20 +62,16 @@ const PeripleoLite = () => {
     setSelected(place?.properties.uri);
   }
 
-  const onSetFilter = () => {
-    const f = elem.current.value;
-    if (f) {
-      setTagFilter(hasTagFilter(f));
-    } else {
-      setTagFilter(null);
-    }
-  }
+  const onClearFilter = () =>
+    setTagFilter(null);
 
-  const onShowEverything = () => {
-    setShowEveryThing(!showEverything);
-  }
+  const onSetFilter = tag =>
+    setTagFilter(hasTagFilter(tag));
 
-  const jprops = [] /* {
+  const onExploreArea = datasets =>
+    setExploreArea(datasets);
+
+  const tour = [] /* {
     target: '.p6o-magic-button',
     content: 'This is my awesome feature!',
     disableBeacon: true
@@ -86,7 +81,7 @@ const PeripleoLite = () => {
     <div className="container">
       <Joyride
         run={true}
-        steps={jprops}
+        steps={tour}
         stepIndex={0}> </Joyride>
       
       <div className="row">
@@ -94,7 +89,7 @@ const PeripleoLite = () => {
           store={store}
           source={markers}
           selected={selected}
-          showEverything={showEverything}
+          showEverything={exploreArea}
           onHover={onHover}
           onSelectPlace={setSelected} />
 
@@ -112,15 +107,10 @@ const PeripleoLite = () => {
         }
       </div>
 
-      {/* selected && 
-        <InfoPanel place={selected} store={store} />
-      */}
-
-      {/* <div className="filter">
-        <input ref={elem} /><button onClick={onSetFilter}>Filter</button>
-      </div> */}
-
-      <HUD />
+      <HUD 
+        store={store} 
+        onClearFilter={onClearFilter}
+        onSetFilter={onSetFilter} />
     </div>
   )
 

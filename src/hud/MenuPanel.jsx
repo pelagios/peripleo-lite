@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import FilterPanel from './filters/FilterPanel';
 
 import './MenuPanel.scss';
 
@@ -7,7 +8,9 @@ const MenuPanel = props => {
 
   const onAddFilterPanel = () =>
     props.onAddPanel(
-      <div className="p6o-stackpanel filters"></div>
+      <FilterPanel
+        onClearFilter={props.onClearFilter}
+        onSetFilter={props.onSetFilter} />
     )
 
   return (

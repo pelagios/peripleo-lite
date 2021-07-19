@@ -1,10 +1,11 @@
-import { normalizeURL } from '.';
+import { normalizeURL, toArray } from '.';
 
 const normalizeAnnotation = annotation => {
   const normalized = { ...annotation };
   
   const id = normalizeURL(annotation.id);
   normalized.id = id;
+  normalized.body = toArray(normalized.body);
 
   return normalized;
 }

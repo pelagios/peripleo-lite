@@ -27,6 +27,10 @@ const HUD = props => {
     setPanels([...panels, panel ]);
   }
 
+  const onDeletePanel = panel => {
+    setPanels(panels.filter(p => p != panel))
+  }
+
   return (
     <div className="p6o-hud">
       <div className="p6o-glass">
@@ -46,7 +50,13 @@ const HUD = props => {
         </div>
 
         <AnimatePresence>
-          {menuOpen && <MenuPanel onAddPanel={onAddPanel} />}
+          {menuOpen && 
+            <MenuPanel 
+              store={props.store}
+              onAddPanel={onAddPanel} 
+              onSetFilter={props.onSetFilter}
+              onClearFilter={props.onClearFilter} />
+          }
         </AnimatePresence>
 
         {stackOpen && 
@@ -59,9 +69,12 @@ const HUD = props => {
                   transition={{ type: 'spring', duration: 0.4 }}
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 150 }}
-                  exit={{ opacity: 0, hieght: 0 }}>
+                  exit={{ opacity: 0, height: 0 }}>
                   
-                  {panel}
+                  {React.cloneElement(panel, { 
+                    store: props.store,
+                    onDelete: () => onDeletePanel(panel) 
+                  })}
 
                 </motion.div>
             

@@ -9,7 +9,7 @@ const toArray = arg =>
  */
 export const tagValues = arg =>
   toArray(arg).reduce((allValues, annotation) => {
-    const values = toArray(annotation.body)
+    const values = annotation.body
       .filter(b => b.purpose === 'tagging')
       .map(b => b.value);
 
@@ -45,9 +45,7 @@ export const aggregateLinks = annotations => {
   }
 
   annotations.forEach(annotation => {
-    const bodies = toArray(annotation.body);
-
-    const linkIds = bodies
+    const linkIds = annotation.body
       .filter(b => (
         b.type === 'SpecificResource' &&
         (b.purpose === 'linking' || b.purpose === 'identifying') &&
@@ -55,7 +53,7 @@ export const aggregateLinks = annotations => {
       ))
       .map(b => b.value);
 
-    const tagValues = bodies
+    const tagValues = annotation.body
       .filter(b => b.purpose === 'tagging')
       .map(b => b.value);
 
