@@ -1,5 +1,7 @@
 import createGraph from 'ngraph.graph';
 import RBush from 'rbush';
+import { featureCollection, polygon } from '@turf/helpers';
+import bbox from '@turf/bbox';
 import * as JsSearch from 'js-search';
 import Formats from './Formats';
 import { importLinkedPlaces } from './importers/LinkedPlacesImporter';
@@ -132,7 +134,16 @@ export default class Store {
     const result = this.tree.search({ minX, minY, maxX, maxY })
       .map(r => r.feature);
 
-    return optDataset ? result.filter(r => r.dataset === optDataset) : result;
+    const filtered = optDataset ? result.filter(r => r.dataset === optDataset) : result;
+
+    // Hack: remove shapes larger than viewport
+    const bboxInside = bbox => {
+      const [ bminX, bminY, bmaxX, bmaxY ] = bbox;
+      return bminX > minX && bmaxX < maxX && bminY > minY && bmaxY < maxY;
+    }
+
+    return filtered.filter(feature =>
+      feature.geometry.type === 'Point' || bboxInside(bbox(feature)));
   }
 
   listAllNodes(dataset, type) {

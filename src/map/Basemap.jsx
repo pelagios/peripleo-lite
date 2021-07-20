@@ -15,7 +15,7 @@ const Basemap = props => {
 
   const [ selected, setSelected ] = useState();
 
-  const [ debouncedViewport ] = useDebounce(viewport, 1000);
+  const [ debouncedViewport ] = useDebounce(viewport, 500);
 
   const [ everything, setEverything ] = useState(null);
 

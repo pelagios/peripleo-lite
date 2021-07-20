@@ -70,7 +70,6 @@ const PeripleoLite = () => {
     setTagFilter(hasTagFilter(tag));
 
   const onExploreArea = () => {
-    console.log('ffo');
     setExploreArea(!exploreArea);
   }
 

@@ -1,24 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CETEIcean from 'CETEIcean';
+import TEIHistogram from './TEIHistogram';
 import { normalizeURL } from '../store/importers';
 
-import './TEIView.css';
+import './TEIView.scss';
 
 const TEIView = props => {
+  
+  const [ tei, setTei ] = useState();
+
   const elem = useRef();
 
-  const callback = entries => {
-
-    /*
-    const distinctURIs = entries => 
-      Array.from(new Set(
-        entries
-          .map(e => e.target.getAttribute('ref'))
-          .filter(attr => attr) // Remove nulls
-          .map(normalizeURL)
-      ));
-    */
-
+  const onIntersect = entries => {
     // Split entries into entered vs. left 
     const entriesEntered = entries.filter(e => e.isIntersecting);
     const entriesLeft = entries.filter(e => !e.isIntersecting);
@@ -36,42 +29,27 @@ const TEIView = props => {
       enteredView: annotationsEntered,
       leftView: annotationsLeft
     });
-
-    /*
-      
-    const added = distinctURIs(entries.filter(e => e.isIntersecting));
-    const removed = distinctURIs(entries.filter(e => !e.isIntersecting));
-
-    if (added.length > 0 || removed.length > 0) {
-      const diff = {};
-
-      if (added.length > 0)
-        diff.added = added;
-
-      if (removed.length > 0)
-        diff.removed = removed;
-
-      props.onPlacesChanged(diff);
-    }
-    */
   }
 
   useEffect(() => {
     const tei = new CETEIcean();
+
     tei.getHTML5(props.tei, data => {
       elem.current.appendChild(data);
   
       const options = {
-        root: elem.current,
+        root: elem.current.parentElement,
         rootMargin: '0px',
         threshold: 1.0
       }
       
-      const observer = new IntersectionObserver(callback, options);
+      const observer = new IntersectionObserver(onIntersect, options);
   
       document.querySelectorAll('tei-placename').forEach(placename => {
         observer.observe(placename);
       });
+
+      setTei(data);
     });
   }, []);
 
@@ -95,11 +73,15 @@ const TEIView = props => {
   }
 
   return (
-    <div 
-      ref={elem}
-      className="p6o-teiview" 
-      onClick={onClick}
-    />
+    <div className="p6o-tei">
+      <div 
+        ref={elem}
+        className="p6o-tei-text" 
+        onClick={onClick}
+      />
+
+      <TEIHistogram tei={tei} />
+    </div>
   )
 
 }

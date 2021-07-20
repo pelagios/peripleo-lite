@@ -1,20 +1,33 @@
-.p6o-teiview {
-  white-space:normal !important;
-  line-height:170%;
-  padding:20px 40px;
-  background-color:#ecf0f1;
-  box-shadow:0 0 12px rgba(0,0,0,0.14);
-  position:relative;
-  z-index:1;
-  border-style:solid;
-  border-color:#d6d7d9;
-  border-width:0 0 0 1px;
-  font-size:17px;
-}
+.p6o-tei {
+  display:flex;
+  flex-direction:column;
 
-.p6o-teiview .selected {
-  background-color:red !important;
-  color:#fff !important;
+  .p6o-tei-text {
+    flex:1;
+    overflow-y:scroll;
+    white-space:normal !important;
+    line-height:170%;
+    padding:20px 40px;
+    background-color:#ecf0f1;
+    box-shadow:0 0 12px rgba(0,0,0,0.14);
+    position:relative;
+    z-index:1;
+    border-style:solid;
+    border-color:#d6d7d9;
+    border-width:0 0 0 1px;
+    font-size:17px;
+
+    .selected {
+      background-color:red !important;
+      color:#fff !important;
+    }
+
+  }
+
+  .p6o-tei-histogram {
+    height:120px;
+  }
+
 }
 
 tei-div[subtype="chapter"]::before {
