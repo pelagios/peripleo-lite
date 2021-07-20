@@ -5,9 +5,18 @@ import { normalizeURL } from '../store/importers';
 
 import './TEIView.scss';
 
+function eqSet(as, bs) {
+  if (!as || !bs) return false;
+  if (as.size !== bs.size) return false;
+  for (var a of as) if (!bs.has(a)) return false;
+  return true;
+}
+
 const TEIView = props => {
   
   const [ tei, setTei ] = useState();
+
+  const [ sections, setSections ] = useState();
 
   const elem = useRef();
 
@@ -15,6 +24,12 @@ const TEIView = props => {
     // Split entries into entered vs. left 
     const entriesEntered = entries.filter(e => e.isIntersecting);
     const entriesLeft = entries.filter(e => !e.isIntersecting);
+
+    // Keep track of current TEI sections
+    const currentSections = new Set(entriesEntered.map(e => e.target.closest('tei-div')));
+
+    if (currentSections.size > 0 && !eqSet(currentSections, sections))
+      setSections(Array.from(currentSections));
 
     // Resolve entered/left annotations from store
     const resolveAnnotations = entries => entries.map(entry => {
@@ -80,7 +95,10 @@ const TEIView = props => {
         onClick={onClick}
       />
 
-      <TEIHistogram tei={tei} />
+      <TEIHistogram
+        {...props}
+        tei={tei} 
+        sections={sections} />
     </div>
   )
 

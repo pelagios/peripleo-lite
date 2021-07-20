@@ -101,6 +101,7 @@ const PeripleoLite = () => {
             onAnnotationsChanged={onAnnotationsChanged}>
             <TEIView
               tei="data/pausanias-book1-pt1-gr.xml" 
+              filter={tagFilter}
               store={store}
               base="http://recogito.humlab.umu.se/annotation/"
               selected={selected}
