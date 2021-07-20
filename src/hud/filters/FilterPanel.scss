@@ -1,0 +1,31 @@
+.p6o-stackpanel.filters {
+  
+  p {
+    padding:20px;
+    position:relative;
+  }
+
+  input {
+    position:relative;
+    font-size:14px;
+    box-sizing:border-box;
+    width:100%;
+    padding:10px;
+    outline:none;
+    background-color:#ecf5ff;
+    border:1px solid rgba(0, 0, 0, 0.08);
+    border-radius:3px;
+    font-family:Ubuntu;
+  }
+
+  .suggestion {
+    position:absolute;
+    top:0;
+    left:0;
+    display:block;
+    padding:31px;
+    color:rgba(0, 0, 0, 0.35);
+    font-size:14px;
+  }
+
+}

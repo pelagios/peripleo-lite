@@ -1,45 +1,78 @@
-.p6o-magic-button {
-  font-family:Roboto;
-  position:absolute;
-  left:20px;
-  bottom:20px;
-  background-color:#f4f4f4;
-  padding:8px;
-  border-radius:50%;
-  border:1px solid rgba(0,0,0,0.2);
-  box-shadow:inset 2px 4px 18px #fff, inset -2px -3px 4px rgba(0,0,0,0.15), 0 0 12px rgba(0,0,0,0.14);
-  z-index:99;
-  transition:all 0.3s;
-  cursor:pointer;
+.p6o-controls {
+  font-family:Ubuntu;
+  color:#3e3e3e;
 
-  img {
-    display:block;
-    width:50px;
-    height:50px;
+  .p6o-magic-button {
+    position:absolute;
+    left:20px;
+    bottom:20px;
+    background-color:#f4f4f4;
+    padding:8px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,0.2);
+    box-shadow:inset 2px 4px 18px #fff, inset -2px -3px 4px rgba(0,0,0,0.15), 0 0 12px rgba(0,0,0,0.14);
+    z-index:99;
+    transition:all 0.3s;
+    cursor:pointer;
+
+    img {
+      display:block;
+      width:50px;
+      height:50px;
+    }
+
   }
 
-}
+  .p6o-magic-button:hover {
+    background-color:#fff;
+    box-shadow:inset 2px 4px 18px #fff, inset -2px -3px 4px rgba(0,0,0,0.15), 0 0 12px rgba(255,255,255,0.2);
+  }
 
-.p6o-magic-button:hover {
-  background-color:#fff;
-  box-shadow:inset 2px 4px 18px #fff, inset -2px -3px 4px rgba(0,0,0,0.15), 0 0 12px rgba(255,255,255,0.2);
-}
+  .p6o-stack {
+    position:absolute;
+    bottom:90px;
+    left:50px;
 
-.p6o-stack {
-  position:absolute;
-  bottom:90px;
-  left:50px;
+    .p6o-stackpanel-wrapper {
+      position:relative;
+      margin-bottom:10px;
 
-  .p6o-stackpanel-wrapper {
-    position:relative;
-    margin-bottom:10px;
+      .p6o-stackpanel {
+        width:300px;
+        height:100%;
+        box-sizing:border-box;
+        background-color:#fff;
+        box-shadow:0 0 4px rgba(0,0,0,0.25);
+        border-radius:3px;
 
-    .p6o-stackpanel {
-      width:300px;
-      height:100%;
-      box-sizing:border-box;
-      border:2px dotted rgba(0, 0, 0, 0.3);
-      background-color:rgba(0,0,0,0.1);
+        header {
+          padding:8px;
+          display:flex;
+          flex-direction:row;
+          justify-content:space-between;
+          align-items:center;
+          border-bottom:1px solid rgba(0, 0, 0, 0.08);
+
+          h4 {
+            font-size:14px;
+            padding:0;
+            margin:0;
+            font-weight:normal;
+          }
+
+          button {
+            background:none;
+            border:none;
+            outline:none;
+            font-size:17px;
+            padding:0;
+            margin:0;
+            color:#3e3e3e;
+          }
+
+        }
+      }
+
     }
 
   }

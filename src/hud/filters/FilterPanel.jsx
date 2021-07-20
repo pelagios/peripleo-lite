@@ -54,20 +54,22 @@ const FilterPanel = props => {
   return (
     <motion.div className="p6o-stackpanel filters">
       <header>
-        <h4>Tags</h4>
-        <BiTrash onClick={onDelete} />
+        <h4>Tag Filters</h4>
+        <button onClick={onDelete}>
+          <BiTrash />
+        </button>
       </header>
       <p>
+        <input
+          value={value} 
+          onKeyDown={onKeyDown}
+          onChange={onChange} />
+
         { suggestions.length > 0 && showSuggestions && 
           <span className="suggestion">
             {suggestions[suggestionIdx]}
           </span> 
         }
-
-        <input
-          value={value} 
-          onKeyDown={onKeyDown}
-          onChange={onChange} />
       </p>
     </motion.div>
   )

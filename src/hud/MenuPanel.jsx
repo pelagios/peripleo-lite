@@ -26,7 +26,7 @@ const MenuPanel = props => {
         exit={{ opacity: 0, width: 0 }}>
         <ul>
           <li>
-            <button onClick={onAddFilterPanel}>Filters</button>
+            <button onClick={onAddFilterPanel}>Tag Filters</button>
           </li>
           <li>
             <button onClick={onExploreArea}>Explore Area</button>
