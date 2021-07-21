@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Store from './store/Store';
+import React, { useContext, useEffect, useState } from 'react';
+import { StoreContext } from './store/StoreContext';
 import Formats from './store/Formats';
 import Map from './map/Map';
 import TEIView  from './text/TEIView';
@@ -13,24 +13,19 @@ import './PeripleoLite.scss';
 
 const PeripleoLite = () => {
 
+  const { store } = useContext(StoreContext);
+
   const [ loaded, setLoaded ] = useState(false);
 
-  const [ store, _ ] = useState(new Store());
-
   const [ currentTrace, setCurrentTrace ] = useState(null);
-
-
-
 
   const [ exploreArea, setExploreArea ] = useState(false);
 
   const [ tagFilter, setTagFilter ] = useState(null);
 
-
-
   const [ selected, setSelected ] = useState(null);
 
-
+  // Load data on init
   useEffect(() => {
     Promise.all([
       // Gazetteers
@@ -43,8 +38,9 @@ const PeripleoLite = () => {
       store.importDataset('Arachne Monuments', Formats.LINKED_TRACES, 'data/arachne-pausanias-traces.lt.json'),
       store.importDataset('Pausanias', Formats.LINKED_TRACES, 'data/pausanias-book1.jsonld')
     ]).then(() => setLoaded(true))
-  }, [ store ]);
+  }, []);
 
+  // The trace view has changed - update everything
   const onAnnotationsChanged = annotations => {
     const linkAggregation = aggregateLinks(annotations);
 
@@ -62,30 +58,22 @@ const PeripleoLite = () => {
     setCurrentTrace({ type: 'FeatureCollection', features });
   }
 
-  const onHover = place => {
-    setSelected(place?.properties.uri);
-  }
-
   const onClearFilter = () =>
     setTagFilter(null);
 
   const onSetFilter = tag =>
     setTagFilter(hasTagFilter(tag));
 
-  const onExploreArea = () => {
+  const toggleExploreArea = () =>
     setExploreArea(!exploreArea);
-  }
 
-  
   return (
     <div className="container">
       <div className="row">
         <Map 
-          store={store}
           currentTrace={currentTrace}
+          exploreArea={exploreArea}
           selected={selected}
-          showEverything={exploreArea}
-          onHover={onHover}
           onSelectPlace={setSelected} />
 
         { loaded && 
@@ -95,7 +83,6 @@ const PeripleoLite = () => {
             <TEIView
               tei="data/pausanias-book1.tei.xml" 
               filter={tagFilter}
-              store={store}
               base="http://recogito.humlab.umu.se/annotation/"
               selected={selected}
               onSelectPlace={setSelected} />
@@ -104,8 +91,7 @@ const PeripleoLite = () => {
       </div>
 
       <HUD 
-        store={store} 
-        onExploreArea={onExploreArea}
+        onExploreArea={toggleExploreArea}
         onClearFilter={onClearFilter}
         onSetFilter={onSetFilter} />
     </div>

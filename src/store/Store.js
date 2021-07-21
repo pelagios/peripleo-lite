@@ -1,6 +1,5 @@
 import createGraph from 'ngraph.graph';
 import RBush from 'rbush';
-import { featureCollection, polygon } from '@turf/helpers';
 import bbox from '@turf/bbox';
 import * as JsSearch from 'js-search';
 import Formats from './Formats';

@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
 import { useDebounce } from 'use-debounce';
+import { StoreContext } from '../store/StoreContext';
 import CurrentTraceLayer from './layers/CurrentTraceLayer';
 import ExploreAllLayer from './layers/ExploreAllLayer';
 import HoverPopup from './HoverPopup';
@@ -10,6 +11,8 @@ import './Map.scss';
 const Map = props => {
 
   const el = useRef();
+
+  const { store } = useContext(StoreContext);
 
   const [ viewport, setViewport ] = useState({
     latitude: 46.2,
@@ -28,7 +31,7 @@ const Map = props => {
   const getEverything = useCallback(viewport => {
     const bounds = new WebMercatorViewport(viewport).getBounds();
 
-    return props.store.getNodesInBBox(bounds);
+    return store.getNodesInBBox(bounds);
   });
 
   useEffect(() => {
@@ -37,7 +40,7 @@ const Map = props => {
     } else {
       setEverything(null);
     }   
-  }, [ props.showEverything, debouncedViewport ]);
+  }, [ props.exploreArea, debouncedViewport ]);
 
   const onHover = useCallback(evt => {
     const { x, y } = evt.center;
@@ -53,23 +56,15 @@ const Map = props => {
 
   useEffect(() => {
     if (props.selected) {
-      const resolved = props.store.getNode(props.selected);
+      const resolved = store.getNode(props.selected);
       setSelected(resolved);
     } else {
       setSelected(null);
     }
   }, [ props.selected ]);
 
-  useEffect(() => {
-    console.log('select feature: ', selected);
-  }, [ selected ]);
-
-
-  const onClick = evt => {
-    const features = evt.features.filter(f => f.source.startsWith('peripleo'));
-    if (features.length > 0)
-      props.onSelectPlace(features[0].properties.uri);
-  }
+  const onClick = () =>
+    props.onSelect(hover);
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
@@ -124,7 +119,7 @@ const Map = props => {
           </Source> }
       </ReactMapGL>
 
-      { hover && <HoverPopup store={props.store} {...hover} /> }
+      { hover && <HoverPopup {...hover} /> }
     </div>
   )
 

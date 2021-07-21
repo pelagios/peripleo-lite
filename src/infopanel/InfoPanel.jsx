@@ -3,6 +3,7 @@ import { tagValues } from '../AnnotationUtils';
 
 const InfoPanel = props => {
 
+  /*
   const place = props.store.getNode(props.place).node;
 
   const connected = props.store.getConnected(props.place).map(c => c.data);
@@ -26,6 +27,7 @@ const InfoPanel = props => {
       </footer>
     </div> 
   ) : null
+  */
 
 }
 

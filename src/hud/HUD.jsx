@@ -52,7 +52,6 @@ const HUD = props => {
         <AnimatePresence>
           {menuOpen && 
             <MenuPanel 
-              store={props.store}
               onAddPanel={onAddPanel} 
               onSetFilter={props.onSetFilter}
               onClearFilter={props.onClearFilter} 
@@ -73,7 +72,6 @@ const HUD = props => {
                   exit={{ opacity: 0, height: 0 }}>
                   
                   {React.cloneElement(panel, { 
-                    store: props.store,
                     onDelete: () => onDeletePanel(panel) 
                   })}
 

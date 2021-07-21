@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BiTrash } from 'react-icons/bi';
 import { listTags } from '../../store/StoreUtils';
+import { StoreContext } from '../../store/StoreContext';
 
 import './FilterPanel.scss';
 
 const FilterPanel = props => {
+
+  const { store } = useContext(StoreContext);
 
   const [ value, setValue ] = useState('');
 
@@ -15,7 +18,7 @@ const FilterPanel = props => {
 
   const [ suggestionIdx, setSuggestionIdx ] = useState(-1);
 
-  const tags = listTags(props.store);
+  const tags = listTags(store);
 
   const onKeyDown = evt => {
     if (evt.which === 9) {

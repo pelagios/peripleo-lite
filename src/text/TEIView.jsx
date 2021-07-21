@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import CETEIcean from 'CETEIcean';
 import TEIHistogram from './TEIHistogram';
 import { normalizeURL } from '../store/importers';
+import { StoreContext } from '../store/StoreContext';
 
 import './TEIView.scss';
 
@@ -13,6 +14,8 @@ function eqSet(as, bs) {
 }
 
 const TEIView = props => {
+
+  const { store } = useContext(StoreContext);
   
   const [ tei, setTei ] = useState();
 
@@ -34,7 +37,7 @@ const TEIView = props => {
     // Resolve entered/left annotations from store
     const resolveAnnotations = entries => entries.map(entry => {
       const uri = props.base + entry.target.id.substring(1);
-      return props.store.getNode(uri);
+      return store.getNode(uri);
     }).filter(e => e); // Remove unresolved;
 
     const annotationsEntered = resolveAnnotations(entriesEntered);

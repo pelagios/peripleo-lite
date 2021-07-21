@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { StoreContext } from '../store/StoreContext';
 
 import './TEIHistogram.scss';
 
@@ -14,6 +15,8 @@ const TEIHistogram = props => {
 
   const canvas = useRef();
 
+  const { store } = useContext(StoreContext);
+
   const [ annotationsBySection, setAnnotationsBySection ] = useState([]);
 
   const [ currentIdx, setCurrentIdx ] = useState(-1);
@@ -28,7 +31,7 @@ const TEIHistogram = props => {
 
         const annotations = placenames.map(elem => {
           const uri = props.base + elem.id.substring(1);
-          return props.store.getNode(uri);
+          return store.getNode(uri);
         })
         // Should not be necessary, but if TEI and LT file are
         // out of sync, there might be unresolved annotations 
