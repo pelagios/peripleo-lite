@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
 import { useDebounce } from 'use-debounce';
-import centroid from '@turf/centroid';
 import CurrentTraceLayer from './layers/CurrentTraceLayer';
+import ExploreAllLayer from './layers/ExploreAllLayer';
 
 const Basemap = props => {
 
@@ -23,10 +23,7 @@ const Basemap = props => {
   const getEverything = useCallback(viewport => {
     const bounds = new WebMercatorViewport(viewport).getBounds();
 
-    return {
-      'type': 'FeatureCollection',
-      'features': props.store.getNodesInBBox(bounds)
-    };
+    return props.store.getNodesInBBox(bounds);
   });
 
   useEffect(() => {
@@ -58,18 +55,6 @@ const Basemap = props => {
     console.log('select feature: ', selected);
   }, [ selected ]);
 
-  const points = {
-    type: 'FeatureCollection',
-    features: props.source?.features.map(f => {
-      return f.geometry ?
-        { ...f, ...{ geometry: centroid(f).geometry } } : f
-      })
-  }
-
-  const shapes = {
-    type: 'FeatureCollection',
-    features: [] // props.source?.features.filter(f => f.geometry?.type !== 'Point') || []
-  }
 
   const onClick = evt => {
     const features = evt.features.filter(f => f.source.startsWith('peripleo'));
@@ -79,48 +64,6 @@ const Basemap = props => {
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
-
-  const everythingStyle = {
-    'type': 'fill',
-    'paint': {
-      'fill-color': '#ff0000',
-      'fill-opacity': 0.3,
-      'fill-outline-color': '#000' 
-    }
-  };
-
-  /*
-  const everythingStyle = {
-    'type': 'circle',
-    'paint': {
-      'circle-radius': [
-        'interpolate',
-        [ 'linear' ],
-        [ 'zoom' ],
-        3, 2,
-        16, 8
-      ],
-      'circle-stroke-width': [
-        'interpolate',
-        [ 'linear' ],
-        [ 'zoom' ],
-        3, 0,
-        16, 1
-      ],
-      'circle-stroke-color': '#880000',
-      'circle-color': '#ff0000',
-      'circle-opacity': [
-        'interpolate',
-        [ 'exponential', 0.5 ],
-        [ 'zoom' ],
-        10, 
-        0.5,
-        18,
-        1
-      ]
-    }
-  };
-  */
 
   const pointLayerStyleSelected = {
     'type': 'circle',
@@ -148,16 +91,13 @@ const Basemap = props => {
       onClick={onClick}
       onHover={onHover}>
 
+      {everything && 
+        <ExploreAllLayer features={everything} /> }
+
       {props.currentTrace && 
         <CurrentTraceLayer 
           shapesToCentroids
-          features={props.currentTrace.features} />
-      }
-
-      { everything && 
-        <Source type="geojson" data={everything}>
-          <Layer {...everythingStyle} />
-        </Source> }
+          features={props.currentTrace.features} /> }
 
       { selected && 
         <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
@@ -168,7 +108,6 @@ const Basemap = props => {
         <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
           <Layer id="l-sel-pl" {...polyLayerStyleSelected} />
         </Source> }
-
     </ReactMapGL>
   )
 

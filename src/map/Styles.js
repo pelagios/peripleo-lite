@@ -1,3 +1,13 @@
+export const circle = args => ({
+  'type': 'circle',
+  'paint': {
+    'circle-radius': args?.radius || 4,
+    'circle-color': args?.fill || '#fff',
+    'circle-stroke-color': args?.stroke || '#000',
+    'circle-stroke-width': args?.strokeWidth || 1
+  }
+});
+
 export const scaledCircle = args => ({
   'type': 'circle',
   'paint': {
@@ -17,7 +27,7 @@ export const scaledCircle = args => ({
 export const colorFill = args => ({
   'type': 'fill',
   'paint': {
-    'fill-color': args?.color || '#ff623b',
+    'fill-color': args?.fill || '#ff623b',
     'fill-opacity': args?.opacity || 0.15
   }
 });
