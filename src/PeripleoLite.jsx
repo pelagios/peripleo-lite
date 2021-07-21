@@ -31,10 +31,10 @@ const PeripleoLite = () => {
   useEffect(() => {
     Promise.all([
       // Gazetteers
-      store.importDataset('ToposText', Formats.LINKED_PLACES, 'data/ToposTextGazetteer.json'),
-      store.importDataset('Pleiades',  Formats.LINKED_PLACES, 'data/pleiades-places-latest.json'),
+      store.importDataset('ToposText', Formats.LINKED_PLACES, 'data/topostext-places.lp.json'),
+      store.importDataset('Pleiades',  Formats.LINKED_PLACES, 'data/pleiades-places.lp.json'),
       store.importDataset('iDAI Gazetteer', Formats.LINKED_PLACES, 'data/arachne-pausanias-places.lp.json'),
-      store.importDataset('ASCSA Agora', Formats.LINKED_PLACES, 'data/ascsa-monuments.lp.json'),
+      store.importDataset('ASCSA Agora', Formats.LINKED_PLACES, 'data/ascsa-monuments-places.lp.json'),
 
       // Traces
       store.importDataset('Arachne Monuments', Formats.LINKED_TRACES, 'data/arachne-pausanias-traces.lt.json'),
