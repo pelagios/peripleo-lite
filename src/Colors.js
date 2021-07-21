@@ -15,8 +15,6 @@ const PALETTE = [
 const DATASETS = {};
 
 export const getDatasetColor = dataset => {
-  console.log(DATASETS);
-  
   const existing = DATASETS[dataset];
 
   if (existing) {

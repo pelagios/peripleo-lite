@@ -12,8 +12,6 @@ const Map = props => {
   const el = useRef();
 
   const [ viewport, setViewport ] = useState({
-    width: '100vw',
-    height: '100vh',
     latitude: 46.2,
     longitude: 16.4,
     zoom: 4
@@ -98,6 +96,8 @@ const Map = props => {
     <div className="p6o-map-container">
       <ReactMapGL
         {...viewport}
+        width="100%"
+        height="100%"
         ref={el}
         mapStyle={style}
         getCursor={() => hover ? 'pointer' : 'auto'}

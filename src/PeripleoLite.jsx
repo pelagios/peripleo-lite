@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Joyride from 'react-joyride';
 import Store from './store/Store';
 import Formats from './store/Formats';
 import Map from './map/Map';
@@ -77,19 +76,9 @@ const PeripleoLite = () => {
     setExploreArea(!exploreArea);
   }
 
-  const tour = [] /* {
-    target: '.p6o-magic-button',
-    content: 'This is my awesome feature!',
-    disableBeacon: true
-  }]; */
   
   return (
     <div className="container">
-      <Joyride
-        run={true}
-        steps={tour}
-        stepIndex={0}> </Joyride>
-      
       <div className="row">
         <Map 
           store={store}
