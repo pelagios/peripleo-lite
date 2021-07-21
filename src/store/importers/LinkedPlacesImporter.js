@@ -9,6 +9,7 @@ const normalizeFeature = (feature, name) => {
   // LP uses '@id', whereas our graph nodes generally use only 'id'
   delete normalized['@id'];
   normalized.id = id;
+  normalized.properties.id = id;
   normalized.properties.dataset = name;
         
   return normalized;

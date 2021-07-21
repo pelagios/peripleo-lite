@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Joyride from 'react-joyride';
 import Store from './store/Store';
 import Formats from './store/Formats';
-import Basemap from './map/Basemap';
+import Map from './map/Map';
 import TEIView  from './text/TEIView';
 import TraceView from './traces/TraceView';
 import { hasTagFilter } from './traces/Filters';
@@ -91,7 +91,7 @@ const PeripleoLite = () => {
         stepIndex={0}> </Joyride>
       
       <div className="row">
-        <Basemap 
+        <Map 
           store={store}
           currentTrace={currentTrace}
           selected={selected}

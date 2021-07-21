@@ -1,0 +1,37 @@
+.p6o-map-hover {
+  position:absolute;
+  background-color:#fff;
+  box-shadow:0 0 4px rgba(0, 0, 0, 0.15);
+  padding:6px 10px;
+  border-radius:3px;
+  margin-left:15px;
+  margin-top:15px;
+  white-space:nowrap;
+  display:flex;
+  flex-direction:row;
+
+
+  * {
+    display:block;
+  }
+
+  .gazetteers {
+    white-space:nowrap;
+    margin-left:5px;
+
+    .gazetteer {
+      display:inline-block;
+      text-align:center;
+      font-size:11px;
+      color:#fff;
+      line-height:18px;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background-color:red;
+      margin:0px 2px;
+    }
+
+  }
+
+}

@@ -1,10 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
 import { useDebounce } from 'use-debounce';
 import CurrentTraceLayer from './layers/CurrentTraceLayer';
 import ExploreAllLayer from './layers/ExploreAllLayer';
+import HoverPopup from './HoverPopup';
 
-const Basemap = props => {
+import './Map.scss';
+
+const Map = props => {
+
+  const el = useRef();
 
   const [ viewport, setViewport ] = useState({
     width: '100vw',
@@ -13,6 +18,8 @@ const Basemap = props => {
     longitude: 16.4,
     zoom: 4
   });
+
+  const [ hover, setHover ] = useState();
 
   const [ selected, setSelected ] = useState();
 
@@ -35,11 +42,15 @@ const Basemap = props => {
   }, [ props.showEverything, debouncedViewport ]);
 
   const onHover = useCallback(evt => {
-    const peripleoFeatures = evt.features.filter(f => f.source.startsWith('peripleo'));
-    if (peripleoFeatures.length > 0)
-      props.onHover(peripleoFeatures[0]);
-    else 
-      props.onHover(null);
+    const { x, y } = evt.center;
+    const peripleoFeatures = evt.features.filter(f => f.source.startsWith('p6o'));
+
+    if (peripleoFeatures.length > 0) {
+      const feature = peripleoFeatures[0];
+      setHover({ feature, x, y });
+    } else {
+      setHover(null);      
+    }
   }, []);
 
   useEffect(() => {
@@ -83,34 +94,40 @@ const Basemap = props => {
     }
   }
 
-  return (
-    <ReactMapGL
-      {...viewport}
-      mapStyle={style}
-      onViewportChange={setViewport}
-      onClick={onClick}
-      onHover={onHover}>
+  return (  
+    <div className="p6o-map-container">
+      <ReactMapGL
+        {...viewport}
+        ref={el}
+        mapStyle={style}
+        getCursor={() => hover ? 'pointer' : 'auto'}
+        onViewportChange={setViewport}
+        onClick={onClick}
+        onHover={onHover}>
 
-      {everything && 
-        <ExploreAllLayer features={everything} /> }
+        {everything && 
+          <ExploreAllLayer features={everything} /> }
 
-      {props.currentTrace && 
-        <CurrentTraceLayer 
-          shapesToCentroids
-          features={props.currentTrace.features} /> }
+        {props.currentTrace && 
+          <CurrentTraceLayer 
+            shapesToCentroids
+            features={props.currentTrace.features} /> }
 
-      { selected && 
-        <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
-          <Layer {...pointLayerStyleSelected} />
-        </Source> }
+        { selected && 
+          <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
+            <Layer {...pointLayerStyleSelected} />
+          </Source> }
 
-      { selected && 
-        <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
-          <Layer id="l-sel-pl" {...polyLayerStyleSelected} />
-        </Source> }
-    </ReactMapGL>
+        { selected && 
+          <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
+            <Layer id="l-sel-pl" {...polyLayerStyleSelected} />
+          </Source> }
+      </ReactMapGL>
+
+      { hover && <HoverPopup store={props.store} {...hover} /> }
+    </div>
   )
 
 }
 
-export default Basemap;
+export default Map;
