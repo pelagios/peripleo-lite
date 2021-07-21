@@ -2,14 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StoreContext } from './store/StoreContext';
 import Formats from './store/Formats';
 import Map from './map/Map';
-import TEIView  from './text/TEIView';
+import TEIView  from './tei/TEIView';
 import TraceView from './traces/TraceView';
 import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
 import HUD from './hud/HUD';
 
 import './PeripleoLite.scss';
-
 
 const PeripleoLite = () => {
 
