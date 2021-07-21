@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import './TEIHistogram.scss';
 
+const BAR_WIDTH = 1;
+const BAR_SPACING = 1;
+const PADDING = 10;
+const HEIGHT = 110;
+
 const countPlaceNames = element =>
   Array.from(element.querySelectorAll('tei-placename')).length;
 
@@ -57,15 +62,15 @@ const TEIHistogram = props => {
         const filteredCount = annotations.filter(props.filter).length;
 
         // Transparent bars at full count
-        ctx.fillStyle = idx === currentIdx ? '#ffe0e0' : '#f0f0ff';    
-        ctx.fillRect(idx * 10 + 30, 110 - count * 2, 8, count * 2);
+        ctx.fillStyle = idx === currentIdx ? '#ffc0c0' : '#e4e4ff';    
+        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 2, BAR_WIDTH, count * 2);
 
         // Full-color bars at filtered count
-        ctx.fillStyle = idx === currentIdx ? '#ff0000' : '#aaaaff';    
-        ctx.fillRect(idx * 10 + 30, 110 - filteredCount * 2, 8, filteredCount * 2);
+        ctx.fillStyle = idx === currentIdx ? '#ff0000' : '#9999ff';    
+        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - filteredCount * 2, BAR_WIDTH, filteredCount * 2);
       } else {
         ctx.fillStyle = idx === currentIdx ? '#ff0000' : '#aaaaff';    
-        ctx.fillRect(idx * 10 + 30, 110 - count * 2, 8, count * 2);
+        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 2, BAR_WIDTH, count * 2);
       }
     });
   }, [ annotationsBySection, currentIdx, props.filter ]);

@@ -38,7 +38,7 @@ const PeripleoLite = () => {
 
       // Traces
       store.importDataset('Arachne Monuments', Formats.LINKED_TRACES, 'data/arachne-pausanias-traces.lt.json'),
-      store.importDataset('Pausanias', Formats.LINKED_TRACES, 'data/pausanias-book1-gr.jsonld')
+      store.importDataset('Pausanias', Formats.LINKED_TRACES, 'data/pausanias-book1.jsonld')
     ]).then(() => setLoaded(true))
   }, [ store ]);
 
@@ -100,7 +100,7 @@ const PeripleoLite = () => {
             filter={tagFilter}
             onAnnotationsChanged={onAnnotationsChanged}>
             <TEIView
-              tei="data/pausanias-book1-pt1-gr.xml" 
+              tei="data/pausanias-book1.tei.xml" 
               filter={tagFilter}
               store={store}
               base="http://recogito.humlab.umu.se/annotation/"
