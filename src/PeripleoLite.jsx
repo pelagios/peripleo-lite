@@ -4,6 +4,7 @@ import Formats from './store/Formats';
 import Map from './map/Map';
 import TEIView  from './tei/TEIView';
 import TraceView from './traces/TraceView';
+import InfoPanel from './infopanel/InfoPanel';
 import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
 import HUD from './hud/HUD';
@@ -48,8 +49,14 @@ const PeripleoLite = () => {
 
       if (feature && feature.type === 'Feature') {
         const f = { ...feature }; // Clone
+
+        // Without this, the graph node will be 
+        // mutated in place - might be useful, but 
+        // very hacky...
+        f.properties = {...feature.properties };
         f.properties.occurrences = bucket.count;
         f.properties.tags = bucket.tags;
+        
         return f;
       } 
     }).filter(f => f); // Remove unresolved
@@ -73,7 +80,7 @@ const PeripleoLite = () => {
           currentTrace={currentTrace}
           exploreArea={exploreArea}
           selected={selected}
-          onSelectPlace={setSelected} />
+          onSelect={setSelected} />
 
         { loaded && 
           <TraceView 
@@ -88,6 +95,10 @@ const PeripleoLite = () => {
           </TraceView>
         }
       </div>
+
+      {selected && 
+        <InfoPanel {...selected} />
+      }
 
       <HUD 
         onExploreArea={toggleExploreArea}

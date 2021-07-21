@@ -35,7 +35,7 @@ const Map = props => {
   });
 
   useEffect(() => {
-    if (props.showEverything) {
+    if (props.exploreArea) {
       setEverything(getEverything(debouncedViewport));
     } else {
       setEverything(null);
@@ -63,8 +63,9 @@ const Map = props => {
     }
   }, [ props.selected ]);
 
-  const onClick = () =>
-    props.onSelect(hover);
+  const onMouseDown = () => hover ? 
+    props.onSelect(store.getNode(hover.feature.properties.id)) : 
+    props.onSelect(null);
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
@@ -97,7 +98,7 @@ const Map = props => {
         mapStyle={style}
         getCursor={() => hover ? 'pointer' : 'auto'}
         onViewportChange={setViewport}
-        onClick={onClick}
+        onMouseDown={onMouseDown}
         onHover={onHover}>
 
         {everything && 

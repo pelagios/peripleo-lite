@@ -6,10 +6,6 @@ html, body {
   font-family:Ubuntu;
 }
 
-button {
-  cursor:pointer;
-}
-
 .container {
   position:relative;
 }
@@ -25,30 +21,8 @@ button {
   flex:1;
 }
 
-.p6o-infopanel {
-  position:absolute;
-  top:10px;
-  left:10px;
-  background-color:#fff;
-  padding:10px;
-  max-width:45%;
-}
-
-.p6o-infopanel .p6o-tag {
-  background-color:grey;
-  border-radius:4px;
-  padding:2px 6px;
-  color:#fff;
-  display:inline-block;
-  margin:0 3px 3px 0;
-}
-
-.show-everything {
-  position:absolute;
-  top:10px;
-  left:10px;
-  padding:10px;
-  background-color:#fff;
+button {
+  cursor:pointer;
 }
 
 .noselect {

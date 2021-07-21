@@ -1,7 +1,18 @@
-import React from 'react';
-import { tagValues } from '../AnnotationUtils';
+import React, { useContext } from 'react';
+import { StoreContext } from '../store/StoreContext';
+
+import './InfoPanel.scss';
 
 const InfoPanel = props => {
+
+  const { store } = useContext(StoreContext);
+
+  const linkedNodes = store.getLinkedNodes(props.id);
+
+  // TODO we'll assume type == 'Feature' for now - which means
+  // it's a fully standards compliant LP record
+
+  console.log(props, linkedNodes);
 
   /*
   const place = props.store.getNode(props.place).node;
@@ -12,10 +23,7 @@ const InfoPanel = props => {
   const linkedTraces = connected.filter(c => c.type === 'Annotation');
 
   const tags = linkedTraces.reduce((tags, a) => [...tags, ...tagValues(a)], []);
-  
-  return place ? (
-    <div className="p6o-infopanel">
-      <header>
+        <header>
         <h1>{place.properties.title}</h1>
         <p>{place.properties.description}</p>
       </header>
@@ -25,10 +33,20 @@ const InfoPanel = props => {
           <span className="p6o-tag">{tag}</span>
         )}
       </footer>
-    </div> 
-  ) : null
   */
 
+  return (
+    <div className="p6o-infopanel">
+      <header>
+        <h3>{props.properties.title}</h3>
+
+        {props.depictions?.map(url =>
+          <img src={url} />
+        )}
+      </header>
+    </div> 
+  )
+ 
 }
 
 export default InfoPanel;
