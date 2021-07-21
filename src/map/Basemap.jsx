@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
 import { useDebounce } from 'use-debounce';
 import centroid from '@turf/centroid';
+import CurrentTraceLayer from './layers/CurrentTraceLayer';
 
 const Basemap = props => {
 
@@ -79,30 +80,6 @@ const Basemap = props => {
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
 
-  const pointLayerStyle = {
-    'type': 'circle',
-    'paint': {
-      'circle-radius': [
-        'interpolate',
-        [ 'linear' ],
-        ['get', 'occurrences' ],
-        1, 5,
-        5, 12
-      ],
-      'circle-stroke-width': 1,
-      'circle-color': '#ff623b',
-      'circle-stroke-color': '#8d260c'
-    }
-  };
-
-  const polyLayerStyle = {
-    'type': 'fill',
-    'paint': {
-      'fill-color': '#ff623b',
-      'fill-opacity': 0.15
-    }
-  };
-
   const everythingStyle = {
     'type': 'fill',
     'paint': {
@@ -148,7 +125,6 @@ const Basemap = props => {
   const pointLayerStyleSelected = {
     'type': 'circle',
     'paint': {
-      ...pointLayerStyle.paint,
       'circle-radius': 18,
       'circle-blur': 0.8,
       'circle-color': '#000000',
@@ -167,23 +143,16 @@ const Basemap = props => {
   return (
     <ReactMapGL
       {...viewport}
-      
       mapStyle={style}
       onViewportChange={setViewport}
       onClick={onClick}
       onHover={onHover}>
 
-      {props.source && 
-        <>
-          <Source id="peripleo-polygons" type="geojson" data={shapes}>
-            <Layer {...polyLayerStyle} />
-          </Source>
-          <Source id="peripleo-points" type="geojson" data={points}>
-          <Layer {...pointLayerStyle} />
-          </Source>
-        </>
+      {props.currentTrace && 
+        <CurrentTraceLayer 
+          shapesToCentroids
+          features={props.currentTrace.features} />
       }
-
 
       { everything && 
         <Source type="geojson" data={everything}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Joyride from 'react-joyride';
 import Store from './store/Store';
 import Formats from './store/Formats';
@@ -14,19 +14,23 @@ import './PeripleoLite.scss';
 
 const PeripleoLite = () => {
 
-  const [ markers, setMarkers ] = useState(null);
+  const [ loaded, setLoaded ] = useState(false);
+
+  const [ store, _ ] = useState(new Store());
+
+  const [ currentTrace, setCurrentTrace ] = useState(null);
+
+
+
 
   const [ exploreArea, setExploreArea ] = useState(false);
 
   const [ tagFilter, setTagFilter ] = useState(null);
 
-  const [ loaded, setLoaded ] = useState(false);
 
-  const [ store, _ ] = useState(new Store());
 
   const [ selected, setSelected ] = useState(null);
 
-  const elem = useRef();
 
   useEffect(() => {
     Promise.all([
@@ -56,7 +60,7 @@ const PeripleoLite = () => {
       } 
     }).filter(f => f); // Remove unresolved
 
-    setMarkers({ type: 'FeatureCollection', features });
+    setCurrentTrace({ type: 'FeatureCollection', features });
   }
 
   const onHover = place => {
@@ -89,7 +93,7 @@ const PeripleoLite = () => {
       <div className="row">
         <Basemap 
           store={store}
-          source={markers}
+          currentTrace={currentTrace}
           selected={selected}
           showEverything={exploreArea}
           onHover={onHover}
