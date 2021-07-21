@@ -3,6 +3,7 @@ import CETEIcean from 'CETEIcean';
 import TEIHistogram from './TEIHistogram';
 import { normalizeURL } from '../store/importers';
 import { StoreContext } from '../store/StoreContext';
+import { Rnd } from 'react-rnd';
 
 import './TEIView.scss';
 
@@ -91,7 +92,19 @@ const TEIView = props => {
   }
 
   return (
-    <div className="p6o-tei">
+    <Rnd
+      className="p6o-tei"
+      default={{
+        x: 0,
+        y: 0,
+        width: 320,
+        height: 200,
+      }}>
+        
+      <header>
+        <h1>Pausanias Book 1</h1>
+      </header>
+      
       <div 
         ref={elem}
         className="p6o-tei-text" 
@@ -102,7 +115,7 @@ const TEIView = props => {
         {...props}
         tei={tei} 
         sections={sections} />
-    </div>
+    </Rnd>
   )
 
 }

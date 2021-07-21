@@ -1,6 +1,9 @@
 .p6o-tei {
-  display:flex;
+  display:flex !important;
   flex-direction:column;
+  border:1px solid #ebebeb;
+  box-shadow:1px 1px 12px rgba(0, 0, 0, 0.1);
+  border-radius:3px;
 
   .p6o-tei-text {
     flex:1;
