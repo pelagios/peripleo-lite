@@ -3,10 +3,11 @@ import { StoreContext } from '../store/StoreContext';
 
 import './TEIHistogram.scss';
 
-const BAR_WIDTH = 1;
+const BAR_WIDTH = 3;
 const BAR_SPACING = 1;
 const PADDING = 10;
 const HEIGHT = 110;
+const RESAMPLE = 2;
 
 const countPlaceNames = element =>
   Array.from(element.querySelectorAll('tei-placename')).length;
@@ -56,8 +57,30 @@ const TEIHistogram = props => {
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, current.width, current.height);
 
+    // Resample
+    let ctr = 0;
+
+    const bars = annotationsBySection.reduce((resampled, obj) => {
+      ctr += 1;
+      if (ctr < RESAMPLE) {
+        return [...resampled, obj ];
+      } else {
+        ctr = 0;
+
+        const head = [...resampled.slice(0, resampled.length - 1)];
+        const last = resampled[resampled.length - 1];
+        
+        const agg = {
+          section: last.section,
+          annotations: [...last.annotations, ...obj.annotations ]
+        };
+
+        return [ ...head, agg ];
+      }
+    }, []);
+
     // Draw bars
-    annotationsBySection.forEach((obj, idx) => {
+    bars.forEach((obj, idx) => {
       const { annotations } = obj;
       const count = annotations.length;
 
@@ -66,14 +89,14 @@ const TEIHistogram = props => {
 
         // Transparent bars at full count
         ctx.fillStyle = idx === currentIdx ? '#ffc0c0' : '#e4e4ff';    
-        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 2, BAR_WIDTH, count * 2);
+        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 1.8, BAR_WIDTH, count * 1.8);
 
         // Full-color bars at filtered count
         ctx.fillStyle = idx === currentIdx ? '#ff0000' : '#9999ff';    
-        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - filteredCount * 2, BAR_WIDTH, filteredCount * 2);
+        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - filteredCount * 1.8, BAR_WIDTH, filteredCount * 1.8);
       } else {
         ctx.fillStyle = idx === currentIdx ? '#ff0000' : '#aaaaff';    
-        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 2, BAR_WIDTH, count * 2);
+        ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 1.8, BAR_WIDTH, count * 1.8);
       }
     });
   }, [ annotationsBySection, currentIdx, props.filter ]);

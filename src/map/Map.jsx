@@ -92,8 +92,8 @@ const Map = props => {
     <div className="p6o-map-container">
       <ReactMapGL
         {...viewport}
-        width="100%"
-        height="100%"
+        width="100vw"
+        height="100vh"
         ref={el}
         mapStyle={style}
         getCursor={() => hover ? 'pointer' : 'auto'}

@@ -74,36 +74,34 @@ const PeripleoLite = () => {
     setExploreArea(!exploreArea);
 
   return (
-    <div className="container">
-      <div className="row">
-        <Map 
-          currentTrace={currentTrace}
-          exploreArea={exploreArea}
-          selected={selected}
-          onSelect={setSelected} />
-
-        { loaded && 
-          <TraceView 
-            filter={tagFilter}
-            onAnnotationsChanged={onAnnotationsChanged}>
-            <TEIView
-              tei="data/pausanias-book1.tei.xml" 
-              filter={tagFilter}
-              base="http://recogito.humlab.umu.se/annotation/"
-              selected={selected}
-              onSelectPlace={setSelected} />
-          </TraceView>
-        }
-      </div>
-
-      {selected && 
-        <InfoPanel {...selected} />
-      }
+    <div className="wrapper">
+      <Map 
+        currentTrace={currentTrace}
+        exploreArea={exploreArea}
+        selected={selected}
+        onSelect={setSelected} />
 
       <HUD 
         onExploreArea={toggleExploreArea}
         onClearFilter={onClearFilter}
         onSetFilter={onSetFilter} />
+
+      { loaded && 
+        <TraceView 
+          filter={tagFilter}
+          onAnnotationsChanged={onAnnotationsChanged}>
+          <TEIView
+            tei="data/pausanias-book1.tei.xml" 
+            filter={tagFilter}
+            base="http://recogito.humlab.umu.se/annotation/"
+            selected={selected}
+            onSelectPlace={setSelected} />
+        </TraceView>
+      }
+
+      {selected && 
+        <InfoPanel {...selected} />
+      }
     </div>
   )
 

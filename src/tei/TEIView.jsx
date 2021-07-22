@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { ResizableBox } from 'react-resizable';
+import Draggable from 'react-draggable'; 
 import CETEIcean from 'CETEIcean';
 import TEIHistogram from './TEIHistogram';
 import { normalizeURL } from '../store/importers';
 import { StoreContext } from '../store/StoreContext';
-import { Rnd } from 'react-rnd';
 
 import './TEIView.scss';
 
@@ -82,6 +83,7 @@ const TEIView = props => {
     elem.current.querySelectorAll(`tei-placename[ref="${props.selected}"]`).forEach(elem => {
       elem.classList.add('selected');
     });
+
   }, [ props.selected ]);
 
   const onClick = evt => {
@@ -92,30 +94,31 @@ const TEIView = props => {
   }
 
   return (
-    <Rnd
-      className="p6o-tei"
-      default={{
-        x: 0,
-        y: 0,
-        width: 320,
-        height: 200,
-      }}>
-        
-      <header>
-        <h1>Pausanias Book 1</h1>
-      </header>
-      
-      <div 
-        ref={elem}
-        className="p6o-tei-text" 
-        onClick={onClick}
-      />
+    <Draggable 
+      handle="header"
+      cancel=".react-resizable-handle">
 
-      <TEIHistogram
-        {...props}
-        tei={tei} 
-        sections={sections} />
-    </Rnd>
+      <ResizableBox 
+        className="p6o-tei-wrapper"
+        width={400}
+        height={400}>
+        <div className="p6o-tei">
+          <header>
+            <h1>Pausanias Book 1</h1>
+          </header>
+          
+          <div 
+            ref={elem}
+            className="p6o-tei-text" 
+            onClick={onClick} />
+
+          {<TEIHistogram
+            {...props}
+            tei={tei} 
+          sections={sections} />}
+        </div>
+      </ResizableBox>
+    </Draggable>
   )
 
 }
