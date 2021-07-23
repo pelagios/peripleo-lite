@@ -105,7 +105,7 @@ const TEIHistogram = props => {
     if (props.sections) {
       const sections = annotationsBySection.map(obj => obj.section);
       const indexes = props.sections.map(s => sections.indexOf(s));
-      setCurrentIdx(indexes[0]);   
+      setCurrentIdx(Math.round(indexes[0] / 2));   
     }
   }, [ props.sections ]);
 
