@@ -1,10 +1,12 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
 import { useDebounce } from 'use-debounce';
+import bbox from '@turf/bbox';
 import { StoreContext } from '../store/StoreContext';
 import CurrentTraceLayer from './layers/CurrentTraceLayer';
 import ExploreAllLayer from './layers/ExploreAllLayer';
 import HoverPopup from './HoverPopup';
+
 
 import './Map.scss';
 
@@ -14,10 +16,14 @@ const Map = props => {
 
   const { store } = useContext(StoreContext);
 
+  const [ isInitialLoad, setIsInitialLoad ] = useState(true);
+
   const [ viewport, setViewport ] = useState({
     latitude: 46.2,
     longitude: 16.4,
-    zoom: 4
+    zoom: 4,
+    width: window.innerWidth,
+    height: window.innerHeight
   });
 
   const [ hover, setHover ] = useState();
@@ -30,9 +36,22 @@ const Map = props => {
 
   const getEverything = useCallback(viewport => {
     const bounds = new WebMercatorViewport(viewport).getBounds();
-
     return store.getNodesInBBox(bounds);
   });
+
+  useEffect(() => {
+    if (isInitialLoad) {
+      const [ minLon, minLat, maxLon, maxLat ] = bbox(props.currentTrace);
+      const initialViewport =
+        new WebMercatorViewport(viewport).fitBounds(
+          [[minLon, minLat], [maxLon, maxLat]], 
+          { padding: { top:0, right:600, bottom:0, left:0 }}
+        );
+
+      setViewport(initialViewport);
+      setIsInitialLoad(false);
+    }
+  }, [ props.currentTrace ]);
 
   useEffect(() => {
     if (props.exploreArea) {

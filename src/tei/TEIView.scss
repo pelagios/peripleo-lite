@@ -1,7 +1,7 @@
 .p6o-tei-wrapper {
   position:absolute;
   top:20px;
-  left:20px;
+  left:calc(100% - 560px);
 
   .p6o-tei {
     height:100%;
@@ -13,13 +13,45 @@
     flex-direction:column;
 
     header {
-      padding:20px;
+      display:flex;
+      flex-direction:row;
+      align-items:baseline;
+      justify-content:space-between;
       border-bottom:1px solid rgba(0, 0, 0, 0.1);
+      padding:15px;
 
       h1 {
         font-size:18px;
         margin:0;
         padding:0;
+      }
+
+      label {
+        display:flex;
+        flex-direction:row;
+        align-items:center;
+        font-size:14px;
+        
+        .toggle {
+          margin:0 8px;
+
+          .react-switch-bg {
+            color:rgba(255, 255, 255, 0.8);
+            font-size:18px;
+
+            div:first-child {
+              svg {
+                padding:2px 4px;
+              }
+            }
+
+            div:last-child {
+              svg {
+                padding:2px 0 2px 7px;
+              }
+            }
+          }
+        }
       }
     
     }

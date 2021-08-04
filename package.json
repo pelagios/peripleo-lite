@@ -51,6 +51,7 @@
     "react-map-gl": "^6.1.16",
     "react-resizable": "^3.0.4",
     "react-rnd": "^10.3.4",
+    "react-switch": "^6.0.0",
     "use-debounce": "^7.0.0"
   }
 }

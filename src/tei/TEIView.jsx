@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import Switch from 'react-switch';
+import { BiWorld, BiBookOpen } from 'react-icons/bi';
 import { ResizableBox } from 'react-resizable';
 import Draggable from 'react-draggable'; 
 import CETEIcean from 'CETEIcean';
@@ -20,6 +22,10 @@ const TEIView = props => {
   const { store } = useContext(StoreContext);
   
   const [ tei, setTei ] = useState();
+
+  const [ allAnnotations, setAllAnnotations ] = useState([]);
+
+  const [ mapAll, setMapAll ] = useState(true);
 
   const [ sections, setSections ] = useState();
 
@@ -51,6 +57,13 @@ const TEIView = props => {
     });
   }
 
+  const getAllAnnotations = () =>
+    Array.from(document.querySelectorAll('tei-placename'))
+      .map(placename => {    
+        const uri = props.base + placename.id.substring(1);
+        return store.getNode(uri);
+      }).filter(e => e); // Remove unresolved;
+  
   useEffect(() => {
     const tei = new CETEIcean();
 
@@ -69,9 +82,19 @@ const TEIView = props => {
         observer.observe(placename);
       });
 
+      setAllAnnotations(getAllAnnotations());
       setTei(data);
     });
   }, []);
+
+  useEffect(() => {
+    if (allAnnotations.length > 0) {
+      if (mapAll)
+        props.onShowAll(allAnnotations);
+      else
+        props.onShowAll(null);
+    }
+  }, [ mapAll, allAnnotations ]);
 
   useEffect(() => {
     // Deselect first
@@ -96,15 +119,29 @@ const TEIView = props => {
   return (
     <Draggable 
       handle="header"
-      cancel=".react-resizable-handle">
+      cancel=".react-resizable-handle, .map-all-toggle">
 
       <ResizableBox 
         className="p6o-tei-wrapper"
-        width={400}
-        height={400}>
+        width={540}
+        height={600}>
         <div className="p6o-tei">
           <header>
             <h1>Pausanias Book 1</h1>
+            <label className="map-all-toggle">
+              <span>Map all places</span>
+              <Switch 
+                className="toggle"
+                height={22}
+                width={52}
+                onColor="#939798"
+                offColor="#939798"
+                checkedIcon={ <BiBookOpen /> }
+                uncheckedIcon={ <BiWorld /> }
+                checked={!mapAll}
+                onChange={checked => setMapAll(!checked)} />
+              <span>places in view</span>
+            </label>
           </header>
           
           <div 
@@ -115,7 +152,7 @@ const TEIView = props => {
           {<TEIHistogram
             {...props}
             tei={tei} 
-          sections={sections} />}
+            sections={sections} />}
         </div>
       </ResizableBox>
     </Draggable>

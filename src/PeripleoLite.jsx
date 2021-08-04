@@ -59,7 +59,9 @@ const PeripleoLite = () => {
         
         return f;
       } 
-    }).filter(f => f); // Remove unresolved
+    })
+    .filter(f => f) // Remove unresolved
+    .filter(f => f.geometry); // Remove unlocated
 
     setCurrentTrace({ type: 'FeatureCollection', features });
   }
@@ -75,11 +77,11 @@ const PeripleoLite = () => {
 
   return (
     <div className="wrapper">
-      <Map 
+      { currentTrace && <Map 
         currentTrace={currentTrace}
         exploreArea={exploreArea}
         selected={selected}
-        onSelect={setSelected} />
+        onSelect={setSelected} /> }
 
       <HUD 
         onExploreArea={toggleExploreArea}

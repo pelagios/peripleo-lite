@@ -7,7 +7,8 @@ export default class TraceView extends Component {
 
     this.state = {
       allAnnotations: [],
-      filteredAnnotations: []
+      filteredAnnotations: [],
+      showAll: false
     }
   }
 
@@ -19,7 +20,9 @@ export default class TraceView extends Component {
       allAnnotations: annotations,
       filteredAnnotations: filtered
     }, () => {
-      this.props.onAnnotationsChanged(filtered);
+      // Suspend updates while we're in showAll mode
+      if (!this.state.showAll)
+        this.props.onAnnotationsChanged(filtered);
     });
   } 
   
@@ -37,10 +40,25 @@ export default class TraceView extends Component {
     this.setAnnotationState(updatedAnnotations, this.props.filter);
   }
 
+  /** 
+   * Temporarily show all annotations, suspending change events, 
+   * but keeping filters.
+   */
+  onShowAll = annotations => {  
+    if (annotations) {
+      this.setState({ showAll: true }, () =>
+        this.props.onAnnotationsChanged(annotations));
+    } else {
+      this.setState({ showAll: false }, () => 
+        this.props.onAnnotationsChanged(this.state.filteredAnnotations));
+    }
+  }
+
   render() {
     return React.Children.map(this.props.children, child =>
       React.cloneElement(child, { 
-        onAnnotationsChanged: this.onAnnotationsChanged 
+        onAnnotationsChanged: this.onAnnotationsChanged,
+        onShowAll: this.onShowAll
       }));
   }
 
