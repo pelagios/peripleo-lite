@@ -111,12 +111,16 @@ export default class Store {
     ))
   }
 
-  /** Get all nodes linked to the given node **/
-  getLinkedNodes(id) {
+  /**
+   * Get all nodes linked to the given node, optionally
+   * limited to nodes of a given type
+   */
+  getLinkedNodes(id, optType) {
     const linkedNodes = [];
 
     this.graph.forEachLinkedNode(id, (node, link) => {
-      linkedNodes.push({ node, link });
+      if (!optType || node.data?.type === optType)
+        linkedNodes.push({ node, link });
     });
 
     return linkedNodes;

@@ -16,6 +16,15 @@ export const tagValues = arg =>
     return [ ...allValues, ...values ];
   }, []);
 
+// Shorthand
+const isLinkBody = body =>
+  body.type === 'SpecificResource' &&
+  (body.purpose === 'linking' || body.purpose === 'identifying') &&
+  body.value;
+
+export const linkValues = annotation =>
+  toArray(annotation.body).filter(isLinkBody).map(b => b.value);
+
   /**
    * Returns aggregate information about the links (bodies
    * of purpose = linking and purpose = identifying) contained
@@ -46,11 +55,7 @@ export const aggregateLinks = annotations => {
 
   annotations.forEach(annotation => {
     const linkIds = annotation.body
-      .filter(b => (
-        b.type === 'SpecificResource' &&
-        (b.purpose === 'linking' || b.purpose === 'identifying') &&
-        b.value
-      ))
+      .filter(isLinkBody)
       .map(b => b.value);
 
     const tagValues = annotation.body

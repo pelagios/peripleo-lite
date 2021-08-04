@@ -97,13 +97,13 @@ const PeripleoLite = () => {
             filter={tagFilter}
             base="http://recogito.humlab.umu.se/annotation/"
             selected={selected}
-            onSelectPlace={setSelected} />
+            onSelectAnnotation={setSelected} />
         </TraceView>
       }
 
-      {selected && 
+      {/*selected?.type === 'Feature' && 
         <InfoPanel {...selected} />
-      }
+      } */}
     </div>
   )
 

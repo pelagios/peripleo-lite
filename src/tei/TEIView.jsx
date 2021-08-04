@@ -5,6 +5,7 @@ import { ResizableBox } from 'react-resizable';
 import Draggable from 'react-draggable'; 
 import CETEIcean from 'CETEIcean';
 import TEIHistogram from './TEIHistogram';
+import { linkValues } from '../AnnotationUtils';
 import { normalizeURL } from '../store/importers';
 import { StoreContext } from '../store/StoreContext';
 
@@ -31,6 +32,12 @@ const TEIView = props => {
 
   const elem = useRef();
 
+  const getURI = tag =>
+    props.base + tag.id.substring(1);
+
+  const uriToId = uri =>
+    '_' + uri.substring(props.base.length);
+
   const onIntersect = entries => {
     // Split entries into entered vs. left 
     const entriesEntered = entries.filter(e => e.isIntersecting);
@@ -43,10 +50,9 @@ const TEIView = props => {
       setSections(Array.from(currentSections));
 
     // Resolve entered/left annotations from store
-    const resolveAnnotations = entries => entries.map(entry => {
-      const uri = props.base + entry.target.id.substring(1);
-      return store.getNode(uri);
-    }).filter(e => e); // Remove unresolved;
+    const resolveAnnotations = entries => entries
+      .map(entry => store.getNode(getURI(entry.target)))
+      .filter(e => e); // Remove unresolved;
 
     const annotationsEntered = resolveAnnotations(entriesEntered);
     const annotationsLeft = resolveAnnotations(entriesLeft);
@@ -59,10 +65,8 @@ const TEIView = props => {
 
   const getAllAnnotations = () =>
     Array.from(document.querySelectorAll('tei-placename'))
-      .map(placename => {    
-        const uri = props.base + placename.id.substring(1);
-        return store.getNode(uri);
-      }).filter(e => e); // Remove unresolved;
+      .map(placename => store.getNode(getURI(placename)))
+      .filter(e => e); // Remove unresolved;
   
   useEffect(() => {
     const tei = new CETEIcean();
@@ -102,18 +106,40 @@ const TEIView = props => {
       elem.classList.remove('selected');
     });
 
-    // Select
-    elem.current.querySelectorAll(`tei-placename[ref="${props.selected}"]`).forEach(elem => {
-      elem.classList.add('selected');
-    });
+    if (props.selected?.type === 'Annotation') {
+      const linkedPlaces = Array.from(new Set(linkValues(props.selected).map(normalizeURL)));
+      console.log('TEI: selecting', linkedPlaces);
 
+      const toSelect = linkedPlaces.reduce((annotations, place) => {
+        // For each linked place, get all annotations 
+        return [ 
+          ...annotations, 
+          ...store.getLinkedNodes(place, 'Annotation').map(n => n.node.data) 
+        ]
+      }, []).map(annotation => uriToId(annotation.id));
+
+      console.log(toSelect.length + ' annotations');
+
+      toSelect.forEach(id =>
+        document.getElementById(id)?.classList.add('selected'));
+    } else if (props.selected?.type === 'Feature') {
+      console.log('TEI: selecting', props.selected.id);
+
+      const toSelect =
+        store.getLinkedNodes(props.selected.id, 'Annotation')
+          .map(n => uriToId(n.node.data.id));
+
+      console.log(toSelect.length + ' annotations');
+
+      toSelect.forEach(id =>
+        document.getElementById(id)?.classList.add('selected'));
+    }
   }, [ props.selected ]);
 
   const onClick = evt => {
-    const uri = evt.target.getAttribute('ref');
-
-    if (uri)
-      props.onSelectPlace(normalizeURL(uri));
+    const annotation = store.getNode(getURI(evt.target));
+    
+    props.onSelectAnnotation(annotation);
   }
 
   return (
