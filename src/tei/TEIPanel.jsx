@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Draggable from 'react-draggable'; 
 import Switch from 'react-switch';
 import { ResizableBox } from 'react-resizable';
+import { BiSpreadsheet } from 'react-icons/bi';
 
 import TraceView from '../traces/TraceView';
 import TextView from './TextView';
@@ -26,6 +27,15 @@ const TEIPanel = props => {
   const [ loaded, setLoaded ] = useState(false);
 
   const [ visibleSections, setVisibleSections ] = useState([]);
+
+  const getSection = () => {
+    const lastElem = visibleSections[visibleSections.length - 1];
+
+    const lastSection = lastElem.getAttribute('n');
+    const lastChapter = lastElem.parentNode.getAttribute('n');
+
+    return lastChapter + '.' + lastSection;
+  }
 
   const onLoaded = annotations => {
     setLoaded(true);
@@ -82,6 +92,17 @@ const TEIPanel = props => {
                 selected={props.selected}
                 visibleSections={visibleSections} />
             }
+
+            <div className="p6o-tei-statusbar">
+              <div className="p6o-tei-section-picker">
+                {visibleSections.length > 0 &&
+                  <span className="p6o-tei-current-section">
+                    Section {getSection()}
+                    <BiSpreadsheet />
+                  </span>
+                }
+              </div>
+            </div>
           </footer>
         </div>
 
