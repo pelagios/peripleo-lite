@@ -26,6 +26,8 @@ const TEIPanel = props => {
 
   const [ loaded, setLoaded ] = useState(false);
 
+  const [ totalAnnotations, setTotalAnnotations ] = useState();
+
   const [ visibleSections, setVisibleSections ] = useState([]);
 
   const getSection = () => {
@@ -38,7 +40,9 @@ const TEIPanel = props => {
   }
 
   const onLoaded = annotations => {
+    setTotalAnnotations(annotations.length);
     setLoaded(true);
+    
     props.onAnnotationsLoaded(annotations);
   }
 
@@ -94,14 +98,20 @@ const TEIPanel = props => {
             }
 
             <div className="p6o-tei-statusbar">
-              <div className="p6o-tei-section-picker">
-                {visibleSections.length > 0 &&
-                  <span className="p6o-tei-current-section">
-                    Section {getSection()}
-                    <BiSpreadsheet />
-                  </span>
-                }
-              </div>
+              {visibleSections.length > 0 &&
+                <>
+                  <div className="p6o-tei-section-picker">
+                    <span className="p6o-tei-current-section">
+                      Section {getSection()}
+                      <BiSpreadsheet />
+                    </span>
+                  </div>
+
+                  <div className="p6o-tei-totals">
+                    {totalAnnotations} Annotations
+                  </div>
+                </>
+              }
             </div>
           </footer>
         </div>
