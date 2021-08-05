@@ -6,57 +6,66 @@ export default class TraceView extends Component {
     super(props);
 
     this.state = {
+      // All annotations in the trace
       allAnnotations: [],
-      filteredAnnotations: [],
-      showAll: false
+
+      // Subset of annotations in the current viewport
+      annotationsInView: [],
+
+      // Flag for showing all vs. showing in view
+      showAll: props.defaultShowAll
     }
   }
 
-  setAnnotationState(annotations, filter) {
-    const filtered = filter ? 
-      annotations.filter(filter) : annotations;
+  // Shorthand
+  notifyChange = (annotations, filter) => {
+    const filtered = filter ? annotations.filter(filter) : annotations;
+    this.props.onAnnotationsChanged(filtered);
+  }
 
-    this.setState({
-      allAnnotations: annotations,
-      filteredAnnotations: filtered
-    }, () => {
-      // Suspend updates while we're in showAll mode
-      if (!this.state.showAll)
-        this.props.onAnnotationsChanged(filtered);
-    });
-  } 
-  
+  /** Re-apply filter when it changes **/
   componentWillReceiveProps(next) {
-    if (this.props.filter !== next.filter)
-      this.setAnnotationState(this.state.allAnnotations, next.filter);
+    if (this.props.filter !== next.filter) {
+      const annotations = this.state.showAll ?
+        this.state.allAnnotations : this.state.annotationsInView;
+
+      this.notifyChange(annotations, next.filter);
+    }
+  }
+
+  onAnnotationsLoaded = allAnnotations => {
+    this.setState({ allAnnotations }, () => {
+      if (this.state.showAll)
+        this.notifyChange(allAnnotations, this.props.filter);
+    });
   }
 
   onAnnotationsChanged = ({ enteredView, leftView }) => {
-    const updatedAnnotations = [ 
-      ...this.state.allAnnotations.filter(a => !leftView.includes(a)),
+    const annotationsInView = [ 
+      ...this.state.annotationsInView.filter(a => !leftView.includes(a)),
       ...enteredView
     ];
 
-    this.setAnnotationState(updatedAnnotations, this.props.filter);
+    this.setState({ annotationsInView }, () => {
+      if (!this.state.showAll)
+        this.notifyChange(annotationsInView, this.props.filter);
+    });
   }
 
-  /** 
-   * Temporarily show all annotations, suspending change events, 
-   * but keeping filters.
-   */
-  onShowAll = annotations => {  
-    if (annotations) {
-      this.setState({ showAll: true }, () =>
-        this.props.onAnnotationsChanged(annotations));
-    } else {
-      this.setState({ showAll: false }, () => 
-        this.props.onAnnotationsChanged(this.state.filteredAnnotations));
-    }
+  onShowAll = showAll => {
+    this.setState({ showAll }, () => {
+      if (showAll)
+        this.notifyChange(this.state.allAnnotations, this.props.filter)
+      else
+        this.notifyChange(this.state.annotationsInView, this.props.filter);
+    });
   }
 
   render() {
     return React.Children.map(this.props.children, child =>
       React.cloneElement(child, { 
+        showAll: this.state.showAll,
+        onAnnotationsLoaded: this.onAnnotationsLoaded,
         onAnnotationsChanged: this.onAnnotationsChanged,
         onShowAll: this.onShowAll
       }));

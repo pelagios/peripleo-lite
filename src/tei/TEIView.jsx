@@ -8,6 +8,7 @@ import TEIHistogram from './TEIHistogram';
 import { linkValues } from '../AnnotationUtils';
 import { normalizeURL } from '../store/importers';
 import { StoreContext } from '../store/StoreContext';
+import TraceView from '../traces/TraceView';
 
 import './TEIView.scss';
 
@@ -23,8 +24,6 @@ const TEIView = props => {
   const { store } = useContext(StoreContext);
   
   const [ tei, setTei ] = useState();
-
-  const [ allAnnotations, setAllAnnotations ] = useState([]);
 
   const [ mapAll, setMapAll ] = useState(true);
 
@@ -86,19 +85,11 @@ const TEIView = props => {
         observer.observe(placename);
       });
 
-      setAllAnnotations(getAllAnnotations());
       setTei(data);
+
+      props.onAnnotationsLoaded(getAllAnnotations());
     });
   }, []);
-
-  useEffect(() => {
-    if (allAnnotations.length > 0) {
-      if (mapAll)
-        props.onShowAll(allAnnotations);
-      else
-        props.onShowAll(null);
-    }
-  }, [ mapAll, allAnnotations ]);
 
   useEffect(() => {
     // Deselect first
@@ -164,8 +155,8 @@ const TEIView = props => {
                 offColor="#939798"
                 checkedIcon={ <BiBookOpen /> }
                 uncheckedIcon={ <BiWorld /> }
-                checked={!mapAll}
-                onChange={checked => setMapAll(!checked)} />
+                checked={!props.showAll}
+                onChange={checked => props.onShowAll(!checked)} />
               <span>places in view</span>
             </label>
           </header>
@@ -186,4 +177,25 @@ const TEIView = props => {
 
 }
 
-export default TEIView;
+/**
+ * Wraps the TEIView into a TraceView that adds some generic state 
+ * management boilerplate.
+ */
+const TEITraceView = props => {
+
+  return (
+    <TraceView 
+      filter={props.filter}
+      defaultShowAll={true}
+      onAnnotationsChanged={props.onAnnotationsChanged}>
+
+      <TEIView 
+        data={props.data}
+        selected={props.selected}
+        onSelect={props.onSelect} />
+    </TraceView>
+  )
+
+}
+
+export default TEITraceView;

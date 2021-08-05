@@ -7,7 +7,6 @@ import Formats from './store/Formats';
 // Top-level UI
 import HUD from './hud/HUD';
 import Map from './map/Map';
-import TraceView from './traces/TraceView';
 import TEIView  from './tei/TEIView';
 import InfoPanel from './infopanel/InfoPanel';
 
@@ -94,11 +93,6 @@ const PeripleoLite = () => {
 
   return (
     <div className="container">
-      <HUD 
-        onSetFilter={tag => setTagFilter(hasTagFilter(tag))} 
-        onClearFilter={() => setTagFiter(null)}
-        onExploreArea={() => setExploreAreaEnabled(!isExploreAreaEnabled)} />
-
       {currentTrace && 
         <Map 
           currentTrace={currentTrace}
@@ -107,18 +101,18 @@ const PeripleoLite = () => {
           onSelect={setCurrentSelection} />
       }
 
+      <HUD 
+        onSetFilter={tag => setTagFilter(hasTagFilter(tag))} 
+        onClearFilter={() => setTagFiter(null)}
+        onExploreArea={() => setExploreAreaEnabled(!isExploreAreaEnabled)} />
+
       {currentTEI && 
-        <TraceView 
+        <TEIView
+          data={currentTEI}
           filter={tagFilter}
-          onAnnotationsChanged={onAnnotationsChanged}>
-
-          <TEIView
-            data={currentTEI}
-            filter={tagFilter}
-            selected={currentSelection}
-            onSelect={setCurrentSelection} />
-
-        </TraceView>
+          selected={currentSelection}
+          onSelect={setCurrentSelection} 
+          onAnnotationsChanged={onAnnotationsChanged} />
       }
 
       {currentSelection && 
