@@ -6,9 +6,10 @@ import Draggable from 'react-draggable';
 import CETEIcean from 'CETEIcean';
 import TEIHistogram from './TEIHistogram';
 import { linkValues } from '../AnnotationUtils';
-import { normalizeURL } from '../store/importers';
+import { normalizeURI } from '../AnnotationUtils';
 import { StoreContext } from '../store/StoreContext';
 import TraceView from '../traces/TraceView';
+import Selection from '../Selection';
 
 import './TEIView.scss';
 
@@ -24,8 +25,6 @@ const TEIView = props => {
   const { store } = useContext(StoreContext);
   
   const [ tei, setTei ] = useState();
-
-  const [ mapAll, setMapAll ] = useState(true);
 
   const [ sections, setSections ] = useState();
 
@@ -98,7 +97,9 @@ const TEIView = props => {
     });
 
     if (props.selected?.type === 'Annotation') {
-      const linkedPlaces = Array.from(new Set(linkValues(props.selected).map(normalizeURL)));
+
+
+      const linkedPlaces = Array.from(new Set(linkValues(props.selected).map(normalizeURI)));
       console.log('TEI: selecting', linkedPlaces);
 
       const toSelect = linkedPlaces.reduce((annotations, place) => {
@@ -129,8 +130,7 @@ const TEIView = props => {
 
   const onClick = evt => {
     const annotation = store.getNode(getURI(evt.target));
-    // TODO
-    // props.onSelectAnnotation(annotation);
+    props.onSelect(new Selection(annotation, store));
   }
 
   return (

@@ -1,9 +1,9 @@
-import { normalizeURL } from '.';
+import { normalizeURI } from '../../AnnotationUtils';
 
 const normalizeAnnotation = annotation => {
   const normalized = { ...annotation };
   
-  const id = normalizeURL(annotation.id);
+  const id = normalizeURI(annotation.id);
   normalized.id = id;
   normalized.body = Array.isArray(normalized.body) ? normalized.body : [ normalized.body ];
 
@@ -16,10 +16,10 @@ const getTarget = (annotation, dataset) => {
   target.dataset = dataset;
 
   if (target.id) {
-    target.id = normalizeURL(target.id);
+    target.id = normalizeURI(target.id);
     return target;
   } else if (target.source) {
-    target.id = normalizeURL(target.source);
+    target.id = normalizeURI(target.source);
     return target;
   }
 }
@@ -32,7 +32,7 @@ const getLinkBodies = annotation =>
       b.value))
     .map(body => ({
       ...body,
-      value: normalizeURL(body.value)
+      value: normalizeURI(body.value)
     }))
 
 const toDocument = target => ({

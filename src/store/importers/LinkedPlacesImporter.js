@@ -1,10 +1,10 @@
 import bbox from '@turf/bbox';
-import { normalizeURL } from '.';
+import { normalizeURI } from '../../AnnotationUtils';
 
 const normalizeFeature = (feature, name) => {
   const normalized = { ...feature };
 
-  const id = normalizeURL(feature['@id']);
+  const id = normalizeURI(feature['@id']);
 
   // LP uses '@id', whereas our graph nodes generally use only 'id'
   delete normalized['@id'];
@@ -69,7 +69,7 @@ export const importLinkedPlaces = (name, url, graph, tree, search) =>
             // { type, identifier }
 
             const sourceId = feature.id;
-            const targetId = normalizeURL(link.identifier);
+            const targetId = normalizeURI(link.identifier);
 
             // Normalize in place
             link.identifier = targetId;

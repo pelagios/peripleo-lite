@@ -9,9 +9,12 @@ const isLinkBody = body =>
   (body.purpose === 'linking' || body.purpose === 'identifying') &&
   body.value;
 
-/**
- * Exported utility functions
- */
+/******************************/
+/* Exported utility functions */
+/******************************/
+
+export const normalizeURI = uri =>
+  uri.replace('https://', 'http://');
 
 /** Tag values in this annotation (body purpose 'tagging') **/
 export const tagValues = annotation =>
