@@ -103,7 +103,7 @@ const PeripleoLite = () => {
 
       <HUD 
         onSetFilter={tag => setTagFilter(hasTagFilter(tag))} 
-        onClearFilter={() => setTagFiter(null)}
+        onClearFilter={() => setTagFilter(null)}
         onExploreArea={() => setExploreAreaEnabled(!isExploreAreaEnabled)} />
 
       {currentTEI && 

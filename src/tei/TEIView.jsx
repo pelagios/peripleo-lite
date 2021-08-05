@@ -166,10 +166,11 @@ const TEIView = props => {
             className="p6o-tei-text" 
             onClick={onClick} />
 
-          {<TEIHistogram
+          <TEIHistogram
             tei={tei} 
             prefix={props.data.prefix}
-            sections={sections} />}
+            filter={props.filter}
+            sections={sections} />
         </div>
       </ResizableBox>
     </Draggable>
@@ -191,6 +192,7 @@ const TEITraceView = props => {
 
       <TEIView 
         data={props.data}
+        filter={props.filter}
         selected={props.selected}
         onSelect={props.onSelect} />
     </TraceView>
