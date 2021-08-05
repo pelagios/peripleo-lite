@@ -95,7 +95,7 @@ const TEIHistogram = props => {
         if (props.filter && props.selected)
           filteredCount = annotations
             .filter(props.filter)
-            .filter(annotation => annotation.linksTo(props.selected.id))
+            .filter(annotation => linksTo(annotation, props.selected.id))
             .length;
         else if (props.filter)
           filteredCount = annotations.filter(props.filter).length;
