@@ -14,7 +14,8 @@ const PALETTE = [
 
 const DATASETS = {};
 
-export const getDatasetColor = dataset => {
+export const colorForDataset = dataset => {
+
   const existing = DATASETS[dataset];
 
   if (existing) {
@@ -30,4 +31,5 @@ export const getDatasetColor = dataset => {
       throw "Out of colors!"
     }
   }
+  
 }

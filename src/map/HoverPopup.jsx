@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { getDatasetColor } from '../Colors';
+import { colorForDataset } from '../Colors';
 import { StoreContext } from '../store/StoreContext';
 
 const HoverPopup = props => {
@@ -34,7 +34,7 @@ const HoverPopup = props => {
           <span
             key={g} 
             className={`gazetteer ${g}`}
-            style={{ backgroundColor: getDatasetColor(g) }}>{g.substring(0, 1).toUpperCase()}</span>
+            style={{ backgroundColor: colorForDataset(g) }}>{g.substring(0, 1).toUpperCase()}</span>
         )}
       </span>
     </div>

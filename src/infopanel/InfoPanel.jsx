@@ -1,26 +1,48 @@
 import React, { useContext } from 'react';
+
 import { StoreContext } from '../store/StoreContext';
+import { colorForDataset } from '../Colors';
 import When from './when';
-import { getDatasetColor } from '../Colors';
 
 import './InfoPanel.scss';
 
-// Shorthand
 const distinct = arr => Array.from(new Set(arr));
 
 const InfoPanel = props => {
 
   const { store } = useContext(StoreContext);
 
-  /*
+  // Selection is either a place or annotation
+  const selectedPlaces = props.selected.type === 'Feature' ? 
+    [ props.selected ] : store.getLinkedNodes(props.selected.id, 'Feature').map(n => n.node.data);
 
-  const linkedPlaces = store
-    .getLinkedNodes(props.id)
+  if (selectedPlaces.length === 0)
+    return null;
+
+  // Limitation 1: current implementation shows first place only, and ignores the rest
+  const place = selectedPlaces[0];
+
+  // Limitation 2: no union records yet, only immediate linked neighbours
+  const linkedPlaces = store.getLinkedNodes(place.id)
     .filter(t => t.node.data?.type === 'Feature')
     .map(t => t.node.data);
 
-  // Shorthand - HACK!!
-  const appendLinked = (optValues, prop) => {
+  // Helper: Shorthand that return the given property from the place or, if
+  // the place doesn't have it, the first value found in linked places 
+  const firstValue = key => {
+    if (place[key]) {
+      return place[key];
+    } else {
+      const p = linkedPlaces.find(p => p[key]);
+      return p && p[key];
+    }
+  }
+
+  // Helper: collects given properties from both the place and
+  // all linked places, adding in source dataset info
+  // HACK!!!
+  const collectLinked = (optValues, prop) => {
+
     const values = (optValues || [])
       .map(objOrStr => objOrStr.url || objOrStr.toponym ?
           ({ ...obj, dataset: props.dataset }) :
@@ -34,40 +56,29 @@ const InfoPanel = props => {
 
     return [ ...values, ...linkedValues ];
   }
+  
+  /*************************/
+  /* Properties to display */
+  /*************************/
 
-  // Shorthand
-  const first = (prop) => {
-    if (props[prop]) {
-      return props[prop];
-    } else {
-      const p = linkedPlaces.find(p => p[prop]);
-      return p && p[prop];
-    }
-  }
-
-  // TODO we'll assume type == 'Feature' for now - which means
-  // it's a fully standards compliant LP record
-  const uris = [
-    { id: props.id, dataset: props.properties.dataset },
+  const gazetteerURIs = [
+    { id: place.id, dataset: place.properties.dataset },
     ...linkedPlaces.map(p => ({ id: p.id, dataset: p.properties.dataset })) 
   ];
-
-  const depictions = distinct(appendLinked(props.depictions, 'depictions')); 
+  
+  const depictions = distinct(collectLinked(props.depictions, 'depictions')); 
   const hasDepictions = depictions.length > 0; // Shorthand
 
-  const names = distinct(appendLinked(props.names, 'names'));
-  const when = first('when') && new When(first('when'));
-
-  */
+  const names = distinct(collectLinked(props.names, 'names'));
+  const when = firstValue('when') && new When(firstValue('when'));
 
   return (
     <div className="p6o-infopanel">
-      {/*
       <header
         className={hasDepictions ? 'has-depictions' : null}
-        style={hasDepictions ? {backgroundImage: `url(${depictions[0].url})`} : null}>
+        style={hasDepictions ? { backgroundImage: `url(${depictions[0].url})` } : null}>
 
-        <h3>{props.properties.title}</h3>
+        <h3>{place.properties.title}</h3>
       </header>
 
       <main>
@@ -86,8 +97,8 @@ const InfoPanel = props => {
         }
 
         <ul className="uris">
-          {uris.map(u => 
-            <li key={u.id} style={{ backgroundColor: getDatasetColor(u.dataset)}}>
+          {gazetteerURIs.map(u => 
+            <li key={u.id} style={{ backgroundColor: colorForDataset(u.dataset) }}>
               <a href={u.id}>{u.dataset}</a>
             </li>
           )}
@@ -97,8 +108,6 @@ const InfoPanel = props => {
       <footer>
 
       </footer>
-      */}
-    
     </div> 
   )
  

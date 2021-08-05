@@ -23,8 +23,4 @@ export default class Selection {
     return Array.from(new Set(linkValues(this.node).map(normalizeURI)));
   }
 
-  get unionRecord() {
-    // TODO
-  }
-
 }
