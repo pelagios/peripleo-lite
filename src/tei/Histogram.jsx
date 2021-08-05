@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+
 import { StoreContext } from '../store/StoreContext';
 import { linksTo } from '../AnnotationUtils';
 
@@ -9,9 +10,6 @@ const BAR_SPACING = 1;
 const PADDING = 10;
 const HEIGHT = 110;
 const RESAMPLE = 2;
-
-const countPlaceNames = element =>
-  Array.from(element.querySelectorAll('tei-placename')).length;
 
 const Histogram = props => {
 
@@ -75,10 +73,6 @@ const Histogram = props => {
         return [ ...head, agg ];
       }
     }, []);
-
-    const filterSelected = annotations => {
-
-    }
 
     // Draw bars
     bars.forEach((obj, idx) => {
