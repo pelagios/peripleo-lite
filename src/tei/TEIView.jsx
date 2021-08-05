@@ -30,8 +30,8 @@ const TEIView = props => {
 
   const elem = useRef();
 
-  const getURI = tag =>
-    props.data.prefix + tag.id.substring(1);
+  const getURI = elem => elem.id ?
+    props.data.prefix + elem.id.substring(1) : null;
 
   const uriToId = uri =>
     '_' + uri.substring(props.data.prefix.length);
@@ -97,29 +97,22 @@ const TEIView = props => {
     });
 
     if (props.selected?.type === 'Annotation') {
+      // If an annotation is selected, fetch all links in this annotation
+      // and that get all other annotations linking to the same URI
+      const { linkedIDs } = props.selected;
 
-
-      const linkedPlaces = Array.from(new Set(linkValues(props.selected).map(normalizeURI)));
-      console.log('TEI: selecting', linkedPlaces);
-
-      const toSelect = linkedPlaces.reduce((annotations, place) => {
-        // For each linked place, get all annotations 
-        return [ 
-          ...annotations, 
-          ...store.getLinkedNodes(place, 'Annotation').map(n => n.node.data) 
-        ]
-      }, []).map(annotation => uriToId(annotation.id));
-
-      console.log(toSelect.length + ' annotations');
+      const toSelect = linkedIDs.reduce((annotations, uri) => [
+        ...annotations, 
+        ...store.getLinkedNodes(uri, 'Annotation').map(n => n.node.data) 
+      ], []).map(annotation => uriToId(annotation.id));
 
       toSelect.forEach(id =>
         document.getElementById(id)?.classList.add('selected'));
     } else if (props.selected?.type === 'Feature') {
       console.log('TEI: selecting', props.selected.id);
 
-      const toSelect =
-        store.getLinkedNodes(props.selected.id, 'Annotation')
-          .map(n => uriToId(n.node.data.id));
+      const toSelect = store.getLinkedNodes(props.selected.id, 'Annotation')
+        .map(n => uriToId(n.node.data.id));
 
       console.log(toSelect.length + ' annotations');
 
@@ -130,7 +123,10 @@ const TEIView = props => {
 
   const onClick = evt => {
     const annotation = store.getNode(getURI(evt.target));
-    props.onSelect(new Selection(annotation, store));
+    if (annotation)
+      props.onSelect(new Selection(annotation, store));
+    else 
+      props.onSelect(null);
   }
 
   return (
@@ -170,6 +166,7 @@ const TEIView = props => {
             tei={tei} 
             prefix={props.data.prefix}
             filter={props.filter}
+            selected={props.selected}
             sections={sections} />
         </div>
       </ResizableBox>

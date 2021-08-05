@@ -11,14 +11,20 @@ export default class Selection {
     this.store = store;
   }
 
+  get id() {
+    return this.node.id;
+  }
+
   get type() {
     return this.node.type;
   }
 
-  linkedNodes = () => {
-    const linkedNodes = Array.from(new Set(linkValues(this.node).map(normalizeURI)));
-    console.log('TEI: selecting', linkedPlaces);
-  
+  get linkedIDs() {
+    return Array.from(new Set(linkValues(this.node).map(normalizeURI)));
+  }
+
+  get unionRecord() {
+    // TODO
   }
 
 }

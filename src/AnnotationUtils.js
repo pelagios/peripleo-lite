@@ -26,6 +26,10 @@ export const tagValues = annotation =>
 export const linkValues = annotation =>
   toArray(annotation.body).filter(isLinkBody).map(b => b.value);
 
+/** Returns true if the annotation links to the given URI */
+export const linksTo = (annotation, uri) => 
+  new Set(linkValues(annotation)).has(normalizeURI(uri));
+
 /**
  * Returns aggregate information about the links (body
  * purpose 'linking' or 'identifying') contained in the

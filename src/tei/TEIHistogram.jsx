@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StoreContext } from '../store/StoreContext';
+import { linksTo } from '../AnnotationUtils';
 
 import './TEIHistogram.scss';
 
@@ -47,8 +48,8 @@ const TEIHistogram = props => {
     }
   }, [ props.tei ]);
 
-  // Re-render when histogram, filters or 
-  // current index changes
+  // Re-render when histogram, filters, selection,
+  // or current index changes
   useEffect(() => {
     const { current } = canvas;
     const ctx = current.getContext('2d');
@@ -79,13 +80,31 @@ const TEIHistogram = props => {
       }
     }, []);
 
+    const filterSelected = annotations => {
+
+    }
+
     // Draw bars
     bars.forEach((obj, idx) => {
       const { annotations } = obj;
       const count = annotations.length;
 
-      if (props.filter) {
-        const filteredCount = annotations.filter(props.filter).length;
+      if (props.filter || props.selected) {
+        let filteredCount;
+
+        if (props.filter && props.selected)
+          filteredCount = annotations
+            .filter(props.filter)
+            .filter(annotation => annotation.linksTo(props.selected.id))
+            .length;
+        else if (props.filter)
+          filteredCount = annotations.filter(props.filter).length;
+        else if (props.selected)
+          filteredCount = annotations
+            .filter(annotation => linksTo(annotation, props.selected.id))
+            .length;
+        else 
+          filteredCount = annotations.length;
 
         // Transparent bars at full count
         ctx.fillStyle = idx === currentIdx ? '#ffc0c0' : '#e4e4ff';    
@@ -99,7 +118,7 @@ const TEIHistogram = props => {
         ctx.fillRect(idx * (BAR_WIDTH + BAR_SPACING) + PADDING, HEIGHT - count * 1.8, BAR_WIDTH, count * 1.8);
       }
     });
-  }, [ annotationsBySection, currentIdx, props.filter ]);
+  }, [ annotationsBySection, currentIdx, props.filter, props.selected ]);
 
   useEffect(() => {
     if (props.sections) {
