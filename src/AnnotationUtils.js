@@ -1,37 +1,33 @@
+/** 
+ * Shorthands
+ */
 const toArray = arg =>
   Array.isArray(arg) ? arg : [ arg ];
 
-/** 
- * Returns tag values in this annotation (body 
- * purpose = tagging).
- * 
- * @param arg annotation or list of annotations
- */
-export const tagValues = arg =>
-  toArray(arg).reduce((allValues, annotation) => {
-    const values = annotation.body
-      .filter(b => b.purpose === 'tagging')
-      .map(b => b.value);
-
-    return [ ...allValues, ...values ];
-  }, []);
-
-// Shorthand
 const isLinkBody = body =>
   body.type === 'SpecificResource' &&
   (body.purpose === 'linking' || body.purpose === 'identifying') &&
   body.value;
 
+/**
+ * Exported utility functions
+ */
+
+/** Tag values in this annotation (body purpose 'tagging') **/
+export const tagValues = annotation =>
+  toArray(annotation.body)
+    .filter(b => b.purpose === 'tagging')
+    .map(b => b.value);
+
+/** Link values in this annotation (body purpose 'linking' or 'identifying') **/
 export const linkValues = annotation =>
   toArray(annotation.body).filter(isLinkBody).map(b => b.value);
 
-  /**
-   * Returns aggregate information about the links (bodies
-   * of purpose = linking and purpose = identifying) contained
-   * in the list of annotations.
-   * 
-   * @param annotations a list of annotations
-   */
+/**
+ * Returns aggregate information about the links (body
+ * purpose 'linking' or 'identifying') contained in the
+ * list of annotations.
+ */
 export const aggregateLinks = annotations => {
 
   // Modeled (in spirit...) a bit on ElasticSearch aggregations

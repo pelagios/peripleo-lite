@@ -34,6 +34,7 @@ const PeripleoLite = () => {
 
   const { store } = useContext(StoreContext);
 
+  // Load status is for future use
   const [ _, setLoadStatus ] = useState('LOADING');
 
   const [ currentTEI, setCurrentTEI ] = useState();
