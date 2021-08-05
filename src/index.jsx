@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PeripleoLite from './PeripleoLite';
+import Peripleo from './Peripleo';
 import { StoreContextProvider } from './store/StoreContext';
 
 ReactDOM.render(
   <StoreContextProvider>  
-    <PeripleoLite />
+    <Peripleo />
   </StoreContextProvider>
 
 , document.getElementById('app'));

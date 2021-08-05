@@ -15,7 +15,7 @@ import InfoPanel from './infopanel/InfoPanel';
 import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
 
-import './PeripleoLite.scss';
+import './Peripleo.scss';
 
 const initStore = (config, store) =>
   Promise.all(
@@ -34,7 +34,7 @@ const PeripleoLite = () => {
 
   const { store } = useContext(StoreContext);
 
-  const [ loadStatus, setLoadStatus ] = useState('LOADING');
+  const [ _, setLoadStatus ] = useState('LOADING');
 
   const [ currentTEI, setCurrentTEI ] = useState();
 
