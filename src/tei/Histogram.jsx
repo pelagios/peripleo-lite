@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StoreContext } from '../store/StoreContext';
 import { linksTo } from '../AnnotationUtils';
 
-import './TEIHistogram.scss';
+import './Histogram.scss';
 
 const BAR_WIDTH = 3;
 const BAR_SPACING = 1;
@@ -13,7 +13,7 @@ const RESAMPLE = 2;
 const countPlaceNames = element =>
   Array.from(element.querySelectorAll('tei-placename')).length;
 
-const TEIHistogram = props => {
+const Histogram = props => {
 
   const canvas = useRef();
 
@@ -25,28 +25,24 @@ const TEIHistogram = props => {
 
   // Init the annotation list whenever the TEI changes
   useEffect(() => {
-    if (props.tei) {
-      const divs = Array.from(props.tei.querySelectorAll('tei-div[subtype=section]'));
+    const divs = Array.from(document.querySelectorAll('tei-div[subtype=section]'));
 
-      const annotationsBySection = divs.map(section => {
-        const placenames = Array.from(section.querySelectorAll('tei-placename'));
+    const annotationsBySection = divs.map(section => {
+      const placenames = Array.from(section.querySelectorAll('tei-placename'));
 
-        const annotations = placenames.map(elem => {
-          const uri = props.prefix + elem.id.substring(1);
-          return store.getNode(uri);
-        })
-        // Should not be necessary, but if TEI and LT file are
-        // out of sync, there might be unresolved annotations 
-        .filter(a => a);
+      const annotations = placenames.map(elem => {
+        const uri = props.prefix + elem.id.substring(1);
+        return store.getNode(uri);
+      })
+      // Should not be necessary, but if TEI and LT file are
+      // out of sync, there might be unresolved annotations 
+      .filter(a => a);
 
-        return { section, annotations }
-      });
+      return { section, annotations }
+    });
 
-      setAnnotationsBySection(annotationsBySection);
-    } else {
-      setAnnotationsBySection([]);
-    }
-  }, [ props.tei ]);
+    setAnnotationsBySection(annotationsBySection);
+  }, []);
 
   // Re-render when histogram, filters, selection,
   // or current index changes
@@ -121,12 +117,12 @@ const TEIHistogram = props => {
   }, [ annotationsBySection, currentIdx, props.filter, props.selected ]);
 
   useEffect(() => {
-    if (props.sections) {
+    if (props.visibleSections) {
       const sections = annotationsBySection.map(obj => obj.section);
-      const indexes = props.sections.map(s => sections.indexOf(s));
+      const indexes = props.visibleSections.map(s => sections.indexOf(s));
       setCurrentIdx(Math.round(indexes[0] / 2));   
     }
-  }, [ props.sections ]);
+  }, [ props.visibleSections ]);
 
   return (
     <div className="p6o-tei-histogram">
@@ -135,4 +131,4 @@ const TEIHistogram = props => {
   )
 }
 
-export default TEIHistogram;
+export default Histogram;

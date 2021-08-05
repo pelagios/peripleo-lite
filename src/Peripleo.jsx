@@ -7,7 +7,7 @@ import Formats from './store/Formats';
 // Top-level UI
 import HUD from './hud/HUD';
 import Map from './map/Map';
-import TEIView  from './tei/TEIView';
+import TEIPanel  from './tei/TEIPanel';
 import InfoPanel from './infopanel/InfoPanel';
 
 // Util
@@ -107,7 +107,7 @@ const PeripleoLite = () => {
         onExploreArea={() => setExploreAreaEnabled(!isExploreAreaEnabled)} />
 
       {currentTEI && 
-        <TEIView
+        <TEIPanel
           data={currentTEI}
           filter={tagFilter}
           selected={currentSelection}
