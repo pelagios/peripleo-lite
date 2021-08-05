@@ -31,7 +31,7 @@ const TEIHistogram = props => {
         const placenames = Array.from(section.querySelectorAll('tei-placename'));
 
         const annotations = placenames.map(elem => {
-          const uri = props.base + elem.id.substring(1);
+          const uri = props.prefix + elem.id.substring(1);
           return store.getNode(uri);
         })
         // Should not be necessary, but if TEI and LT file are

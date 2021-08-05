@@ -12,6 +12,8 @@ const InfoPanel = props => {
 
   const { store } = useContext(StoreContext);
 
+  /*
+
   const linkedPlaces = store
     .getLinkedNodes(props.id)
     .filter(t => t.node.data?.type === 'Feature')
@@ -56,8 +58,11 @@ const InfoPanel = props => {
   const names = distinct(appendLinked(props.names, 'names'));
   const when = first('when') && new When(first('when'));
 
+  */
+
   return (
     <div className="p6o-infopanel">
+      {/*
       <header
         className={hasDepictions ? 'has-depictions' : null}
         style={hasDepictions ? {backgroundImage: `url(${depictions[0].url})`} : null}>
@@ -92,6 +97,8 @@ const InfoPanel = props => {
       <footer>
 
       </footer>
+      */}
+    
     </div> 
   )
  

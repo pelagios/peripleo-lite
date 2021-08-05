@@ -33,10 +33,10 @@ const TEIView = props => {
   const elem = useRef();
 
   const getURI = tag =>
-    props.base + tag.id.substring(1);
+    props.data.prefix + tag.id.substring(1);
 
   const uriToId = uri =>
-    '_' + uri.substring(props.base.length);
+    '_' + uri.substring(props.data.prefix.length);
 
   const onIntersect = entries => {
     // Split entries into entered vs. left 
@@ -71,7 +71,7 @@ const TEIView = props => {
   useEffect(() => {
     const tei = new CETEIcean();
 
-    tei.getHTML5(props.tei, data => {
+    tei.getHTML5(props.data.tei, data => {
       elem.current.appendChild(data);
   
       const options = {
@@ -138,8 +138,8 @@ const TEIView = props => {
 
   const onClick = evt => {
     const annotation = store.getNode(getURI(evt.target));
-    
-    props.onSelectAnnotation(annotation);
+    // TODO
+    // props.onSelectAnnotation(annotation);
   }
 
   return (
@@ -153,7 +153,7 @@ const TEIView = props => {
         height={600}>
         <div className="p6o-tei">
           <header>
-            <h1>Pausanias Book 1</h1>
+            <h1>{props.data.name}</h1>
             <label className="map-all-toggle">
               <span>Map all places</span>
               <Switch 
@@ -176,8 +176,8 @@ const TEIView = props => {
             onClick={onClick} />
 
           {<TEIHistogram
-            {...props}
             tei={tei} 
+            prefix={props.data.prefix}
             sections={sections} />}
         </div>
       </ResizableBox>

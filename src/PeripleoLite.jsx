@@ -1,109 +1,128 @@
 import React, { useContext, useEffect, useState } from 'react';
+
+// Store
 import { StoreContext } from './store/StoreContext';
 import Formats from './store/Formats';
+
+// Top-level UI
+import HUD from './hud/HUD';
 import Map from './map/Map';
-import TEIView  from './tei/TEIView';
 import TraceView from './traces/TraceView';
+import TEIView  from './tei/TEIView';
 import InfoPanel from './infopanel/InfoPanel';
+
+// Util
 import { hasTagFilter } from './traces/Filters';
 import { aggregateLinks } from './AnnotationUtils';
-import HUD from './hud/HUD';
 
 import './PeripleoLite.scss';
+
+const initStore = (config, store) =>
+  Promise.all(
+    config.data.map(d => { 
+      if (d.format === Formats.LINKED_PLACES || d.format === Formats.LINKED_TRACES) {
+        return store.importDataset(d.name, d.format, d.src);
+      } else if (d.format === Formats.TEI_LT) {
+        return store.importDataset(d.name, Formats.LINKED_TRACES, d.trace);
+      } else {
+        throw "Unsupported format: " + d.format;
+      }
+    })
+  ).then(() => config)
 
 const PeripleoLite = () => {
 
   const { store } = useContext(StoreContext);
 
-  const [ loaded, setLoaded ] = useState(false);
+  const [ loadStatus, setLoadStatus ] = useState('LOADING');
 
-  const [ currentTrace, setCurrentTrace ] = useState(null);
+  const [ currentTEI, setCurrentTEI ] = useState();
 
-  const [ exploreArea, setExploreArea ] = useState(false);
+  const [ currentTrace, setCurrentTrace ] = useState();
 
-  const [ tagFilter, setTagFilter ] = useState(null);
+  const [ currentSelection, setCurrentSelection ] = useState();
 
-  const [ selected, setSelected ] = useState(null);
+  const [ tagFilter, setTagFilter ] = useState();
 
-  // Load data on init
+  const [ isExploreAreaEnabled, setExploreAreaEnabled ] = useState(false);
+  
+  // Load data
   useEffect(() => {
-    Promise.all([
-      // Gazetteers
-      store.importDataset('ToposText', Formats.LINKED_PLACES, 'data/topostext-places.lp.json'),
-      store.importDataset('Pleiades',  Formats.LINKED_PLACES, 'data/pleiades-places.lp.json'),
-      store.importDataset('iDAI Gazetteer', Formats.LINKED_PLACES, 'data/arachne-pausanias-places.lp.json'),
-      store.importDataset('ASCSA Agora', Formats.LINKED_PLACES, 'data/ascsa-monuments-places.lp.json'),
-
-      // Traces
-      store.importDataset('Arachne Monuments', Formats.LINKED_TRACES, 'data/arachne-pausanias-traces.lt.json'),
-      store.importDataset('Pausanias', Formats.LINKED_TRACES, 'data/pausanias-book1.jsonld')
-    ]).then(() => setLoaded(true))
+    fetch('peripleo.config.json')
+      .then(response => response.json())
+      .then(config => initStore(config, store))
+      .then(config =>
+        // Hack: we're assuming there are 0 or 1 TEI data sources (but not more)
+        setCurrentTEI(config.data.find(d => d.format === Formats.TEI_LT)))
+      .then(() => setLoadStatus('COMPLETE'))
+      .catch(error => {
+        setLoadStatus('ERROR');
+        console.error('Error loading Peripleo config. Please add a valid `peripleo.config.json` to your application root.');
+      });
   }, []);
 
-  // The trace view has changed - update everything
+  // The annotations in the trace view have 
+  // changed - resolve map features linked to the 
+  // annotations and update everything 
   const onAnnotationsChanged = annotations => {
+    
+    // All links referenced in annotation bodies, with 
+    // occurrence counts
     const linkAggregation = aggregateLinks(annotations);
 
+    // Resolved features
     const features = linkAggregation.map(bucket => {
-      const feature = store.getNode(bucket.id);    
 
-      if (feature && feature.type === 'Feature') {
-        const f = { ...feature }; // Clone
+      const resolved = store.getNode(bucket.id);    
 
-        // Without this, the graph node will be 
-        // mutated in place - might be useful, but 
-        // very hacky...
-        f.properties = {...feature.properties };
-        f.properties.occurrences = bucket.count;
-        f.properties.tags = bucket.tags;
-        
-        return f;
+      if (resolved && resolved.type === 'Feature') {
+        return { 
+          ...resolved,
+          properties: { 
+            ...resolved.properties,
+            occurrences: bucket.count,
+            tags: bucket.tags
+          }
+        };
       } 
     })
-    .filter(f => f) // Remove unresolved
-    .filter(f => f.geometry); // Remove unlocated
+    .filter(f => f?.geometry); // Remove unresolved and unlocated
 
     setCurrentTrace({ type: 'FeatureCollection', features });
   }
 
-  const onClearFilter = () =>
-    setTagFilter(null);
-
-  const onSetFilter = tag =>
-    setTagFilter(hasTagFilter(tag));
-
-  const toggleExploreArea = () =>
-    setExploreArea(!exploreArea);
-
   return (
-    <div className="wrapper">
-      { currentTrace && <Map 
-        currentTrace={currentTrace}
-        exploreArea={exploreArea}
-        selected={selected}
-        onSelect={setSelected} /> }
-
+    <div className="container">
       <HUD 
-        onExploreArea={toggleExploreArea}
-        onClearFilter={onClearFilter}
-        onSetFilter={onSetFilter} />
+        onSetFilter={tag => setTagFilter(hasTagFilter(tag))} 
+        onClearFilter={() => setTagFiter(null)}
+        onExploreArea={() => setExploreAreaEnabled(!isExploreAreaEnabled)} />
 
-      { loaded && 
+      {currentTrace && 
+        <Map 
+          currentTrace={currentTrace}
+          exploreArea={isExploreAreaEnabled}
+          selected={currentSelection}
+          onSelect={setCurrentSelection} />
+      }
+
+      {currentTEI && 
         <TraceView 
           filter={tagFilter}
           onAnnotationsChanged={onAnnotationsChanged}>
+
           <TEIView
-            tei="data/pausanias-book1.tei.xml" 
+            data={currentTEI}
             filter={tagFilter}
-            base="http://recogito.humlab.umu.se/annotation/"
-            selected={selected}
-            onSelectAnnotation={setSelected} />
+            selected={currentSelection}
+            onSelect={setCurrentSelection} />
+
         </TraceView>
       }
 
-      {/*selected?.type === 'Feature' && 
-        <InfoPanel {...selected} />
-      } */}
+      {currentSelection && 
+        <InfoPanel selected={currentSelection} />
+      }
     </div>
   )
 
