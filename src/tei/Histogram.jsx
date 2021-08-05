@@ -79,19 +79,22 @@ const Histogram = props => {
       const { annotations } = obj;
       const count = annotations.length;
 
-      if (props.filter || props.selected) {
+      // Selection could be Feature or Annotation - get linked Feature, latter
+      const selectedFeature = props.selected?.asFeature();
+
+      if (props.filter || selectedFeature) {
         let filteredCount;
 
-        if (props.filter && props.selected)
+        if (props.filter && selectedFeature)
           filteredCount = annotations
             .filter(props.filter)
-            .filter(annotation => linksTo(annotation, props.selected.id))
+            .filter(annotation => linksTo(annotation, selectedFeature.id))
             .length;
         else if (props.filter)
           filteredCount = annotations.filter(props.filter).length;
-        else if (props.selected)
+        else if (selectedFeature)
           filteredCount = annotations
-            .filter(annotation => linksTo(annotation, props.selected.id))
+            .filter(annotation => linksTo(annotation, selectedFeature.id))
             .length;
         else 
           filteredCount = annotations.length;

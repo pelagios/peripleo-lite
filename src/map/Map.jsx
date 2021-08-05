@@ -6,7 +6,7 @@ import { StoreContext } from '../store/StoreContext';
 import CurrentTraceLayer from './layers/CurrentTraceLayer';
 import ExploreAllLayer from './layers/ExploreAllLayer';
 import HoverPopup from './HoverPopup';
-
+import Selection from '../Selection';
 
 import './Map.scss';
 
@@ -83,7 +83,7 @@ const Map = props => {
   }, [ props.selected ]);
 
   const onMouseDown = () => hover ? 
-    props.onSelect(store.getNode(hover.feature.properties.id)) : 
+    props.onSelect(new Selection(store.getNode(hover.feature.properties.id), store)) : 
     props.onSelect(null);
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'

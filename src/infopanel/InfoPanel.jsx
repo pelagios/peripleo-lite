@@ -14,7 +14,7 @@ const InfoPanel = props => {
 
   // Selection is either a place or annotation
   const selectedPlaces = props.selected.type === 'Feature' ? 
-    [ props.selected ] : store.getLinkedNodes(props.selected.id, 'Feature').map(n => n.node.data);
+    [ props.selected.node ] : store.getLinkedNodes(props.selected.id, 'Feature').map(n => n.node.data);
 
   if (selectedPlaces.length === 0)
     return null;
@@ -66,10 +66,10 @@ const InfoPanel = props => {
     ...linkedPlaces.map(p => ({ id: p.id, dataset: p.properties.dataset })) 
   ];
   
-  const depictions = distinct(collectLinked(props.depictions, 'depictions')); 
+  const depictions = distinct(collectLinked(place.depictions, 'depictions')); 
   const hasDepictions = depictions.length > 0; // Shorthand
 
-  const names = distinct(collectLinked(props.names, 'names'));
+  const names = distinct(collectLinked(place.names, 'names'));
   const when = firstValue('when') && new When(firstValue('when'));
 
   return (
@@ -90,8 +90,8 @@ const InfoPanel = props => {
 
         {names.length > 0 &&
           <ul className="names">
-            {names.map(name => 
-              <li key={name.toponym}>{name.toponym}</li>
+            {names.map((name, idx) => 
+              <li key={`${idx}-${name.toponym}`}>{name.toponym}</li>
             )}
           </ul>
         }
