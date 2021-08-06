@@ -100,16 +100,16 @@ const TEIPanel = props => {
 
               <Switch 
                 className="toggle"
-                height={22}
-                width={52}
-                onColor="#939798"
-                offColor="#939798"
+                height={18}
+                width={40}
+                onColor="#ced0d1"
+                offColor="#ced0d1"
                 checkedIcon={false}
                 uncheckedIcon={false}
                 checked={!props.showAll}
                 onChange={checked => props.onShowAll(!checked)} />
 
-              <span>places in view</span>
+              <span>Places in view</span>
             </label>
           </header>
 
@@ -137,13 +137,13 @@ const TEIPanel = props => {
                 <>
                   <div className="p6o-tei-section-picker">
                     <span className="p6o-tei-current-section">
-                      Section {getSection()}
-                      <BiSpreadsheet />
+                      <label>Section {getSection()}</label>
+                      <span className="icon"><BiSpreadsheet /></span>
                     </span>
                   </div>
 
                   <div className="p6o-tei-totals">
-                    {allAnnotations.length} Annotations
+                    {allAnnotations.length.toLocaleString('en')} Annotations
                   </div>
                 </>
               }
