@@ -85,7 +85,7 @@ export default class Selection {
 
     const prevNodes = this.sequence.slice(sliceFrom, currentIdx);
     const prevSelections = prevNodes.map(node => new Selection(this.store, node, this.sequence))
-      slice().reverse(); // Reverse order!
+      .slice().reverse(); // Reverse order!
 
     return opt_n ? prevSelections : (
       prevSelections.length > 0 ? prevSelections[0] : null

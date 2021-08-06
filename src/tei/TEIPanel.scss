@@ -72,8 +72,12 @@
       border-bottom:1px solid rgba(0, 0, 0, 0.1);
 
       .selected {
-        background-color:red !important;
+        background-color:rgb(187, 136, 70) !important;
         color:#fff !important;
+      }
+
+      .selected.primary {
+        background-color:red !important;
       }
     }
   }

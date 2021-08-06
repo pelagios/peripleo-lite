@@ -27,6 +27,19 @@ const TextView = props => {
   const annotationURI = elem => elem.id ?
     props.data.prefix + elem.id.substring(1) : null;
 
+  // Shorthand to infer the TEI element ID from the annotation
+  const teiId = annotation =>
+    '_' + annotation.id.substring(props.data.prefix.length);
+
+  // Shorthand to add a CSS class to the element for the annotation
+  const addClass = (annotation, cls) => {
+    const elem = document.getElementById(teiId(annotation))
+    if (elem) {
+      elem.classList.add(cls);
+      return elem;
+    }
+  }
+
   const onIntersect = entries => {
     // Split entries into entered vs. left 
     const entriesEntered = entries.filter(e => e.isIntersecting);
@@ -78,7 +91,6 @@ const TextView = props => {
     });
   }, []);
 
-
   // Helper: returns annotations connected to the same node(s) 
   // as the given selection ("sibling nodes") 
   const siblingsTo = selected =>
@@ -94,8 +106,10 @@ const TextView = props => {
   // Selection changed
   useEffect(() => {
     // Deselect first
-    elem.current.querySelectorAll('.selected').forEach(elem =>
-      elem.classList.remove('selected'));
+    elem.current.querySelectorAll('.selected').forEach(elem => {
+      elem.classList.remove('selected');
+      elem.classList.remove('primary');
+    });
 
     // Depending on selection, get linked or sibling annotations
     let toSelect = [];
@@ -103,17 +117,18 @@ const TextView = props => {
     if (props.selected?.type === 'Annotation') {
       // If an annotation is selected, fetch all links in this annotation
       // and that get all other annotations linking to the same URI
-      toSelect = siblingsTo(props.selected)
+      toSelect = siblingsTo(props.selected);
+
+      // In addition, highlight *this* annotation extra and scroll into view 
+      addClass(props.selected, 'primary')
+        .scrollIntoView({ block: 'nearest', inline: 'nearest' });
     } else if (props.selected?.type === 'Feature') {
       // If a place is selected, fetch all annotations linked to it
       toSelect = linkedTo(props.selected);
     }
 
     // Select
-    toSelect.forEach(annotation => {
-      const teiId = '_' + annotation.id.substring(props.data.prefix.length);
-      document.getElementById(teiId)?.classList.add('selected');
-    })
+    toSelect.forEach(annotation => addClass(annotation, 'selected'));
   }, [ props.selected ]);
 
   useEffect(() => 
