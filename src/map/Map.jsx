@@ -1,10 +1,12 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import ReactMapGL, { Layer, Source, WebMercatorViewport } from 'react-map-gl';
-import { useDebounce } from 'use-debounce';
+import ReactMapGL, { WebMercatorViewport } from 'react-map-gl';
 import bbox from '@turf/bbox';
+import { useDebounce } from 'use-debounce';
+
 import { StoreContext } from '../store/StoreContext';
 import CurrentTraceLayer from './layers/CurrentTraceLayer';
 import ExploreAllLayer from './layers/ExploreAllLayer';
+import SelectedPlaceLayer from './layers/SelectedPlaceLayer';
 import HoverPopup from './HoverPopup';
 import Selection from '../Selection';
 
@@ -27,8 +29,6 @@ const Map = props => {
   });
 
   const [ hover, setHover ] = useState();
-
-  const [ selected, setSelected ] = useState();
 
   const [ debouncedViewport ] = useDebounce(viewport, 500);
 
@@ -73,39 +73,12 @@ const Map = props => {
     }
   }, []);
 
-  useEffect(() => {
-    if (props.selected) {
-      const resolved = store.getNode(props.selected);
-      setSelected(resolved);
-    } else {
-      setSelected(null);
-    }
-  }, [ props.selected ]);
-
   const onMouseDown = () => hover ? 
     props.onSelect(new Selection(store, store.getNode(hover.feature.properties.id))) : 
     props.onSelect(null);
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
-
-  const pointLayerStyleSelected = {
-    'type': 'circle',
-    'paint': {
-      'circle-radius': 18,
-      'circle-blur': 0.8,
-      'circle-color': '#000000',
-      'circle-stroke-color': '#000000'
-    }
-  }
-
-  const polyLayerStyleSelected = {
-    'type': 'fill',
-    'paint': {
-      'fill-color': '#000000',
-      'fill-opacity': 0.4
-    }
-  }
 
   return (  
     <div className="p6o-map-container">
@@ -128,15 +101,9 @@ const Map = props => {
             shapesToCentroids
             features={props.currentTrace.features} /> }
 
-        { selected && 
-          <Source type="geojson" data={selected?.geometry?.type === 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
-            <Layer {...pointLayerStyleSelected} />
-          </Source> }
-
-        { selected && 
-          <Source id="selected-pl" type="geojson" data={selected?.geometry?.type !== 'Point' ? selected : { type: 'FeatureCollection', features: [] }}>
-            <Layer id="l-sel-pl" {...polyLayerStyleSelected} />
-          </Source> }
+        {props.selected && 
+          <SelectedPlaceLayer
+            selected={props.selected} /> }
       </ReactMapGL>
 
       { hover && <HoverPopup {...hover} /> }

@@ -12,6 +12,10 @@ const InfoPanel = props => {
 
   const { store } = useContext(StoreContext);
 
+  // Hack
+  if (props.selected.type === 'Annotation')
+    return null;
+
   // Selection is either a place or annotation
   const selectedPlaces = props.selected.type === 'Feature' ? 
     [ props.selected.node ] : store.getLinkedNodes(props.selected.id, 'Feature').map(n => n.node.data);

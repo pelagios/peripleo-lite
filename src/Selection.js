@@ -20,6 +20,10 @@ export default class Selection {
     return this.node.type;
   }
 
+  get hasSequence() {
+    return this.sequence !== null && this.sequence !== undefined;
+  }
+
   get linkedIDs() {
     return Array.from(new Set(linkValues(this.node).map(normalizeURI)));
   }
