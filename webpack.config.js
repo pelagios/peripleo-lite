@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: './src/index.jsx',
   output: {
-    filename: 'peripleo.min.js',
+    filename: 'peripleo.js',
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
@@ -13,6 +13,9 @@ module.exports = {
     alias: {
       'mapbox-gl': 'maplibre-gl'
     }
+  },
+  optimization: {
+    minimize: true
   },
   module: {
     rules: [

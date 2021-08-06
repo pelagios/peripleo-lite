@@ -1,0 +1,18 @@
+{
+  "data": [
+    { "name": "ToposText",      "format": "LINKED_PLACES", "src": "data/topostext-places.lp.json" },
+    { "name": "Pleiades",       "format": "LINKED_PLACES", "src": "data/pleiades-places.lp.json" },
+    { "name": "iDAI.gazetteer", "format": "LINKED_PLACES", "src": "data/arachne-pausanias-places.lp.json" },
+    { "name": "ASCSA Agora",    "format": "LINKED_PLACES", "src": "data/ascsa-monuments-places.lp.json" },
+    
+    { "name": "Arachne Monuments", "format": "LINKED_TRACES", "src": "data/arachne-pausanias-traces.lt.json" },
+
+    { 
+      "name": "Pausanias Book 1", 
+      "format": "TEI+LINKED_TRACES", 
+      "trace": "data/pausanias-book1.jsonld",
+      "tei": "data/pausanias-book1.tei.xml",
+      "prefix": "http://recogito.humlab.umu.se/annotation/"
+    }
+  ] 
+}
