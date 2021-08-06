@@ -1,13 +1,5 @@
 import { linkValues, normalizeURI } from './AnnotationUtils';
 
-export class Sequence {
-
-  constructor() {
-
-  }
-
-}
-
 export default class Selection {
 
   /**
@@ -50,38 +42,54 @@ export default class Selection {
 
   /** 
    * In case the selection is part of an "ordered trace" (like a TEI document),
-   * this method returns the next n selections in the trace sequence.
+   * this method returns the next n selections in the trace sequence. If n is
+   * omitted, only the next selection is returned.
    * 
    * The method returns null in case the selection is not part of an ordered trace;
    * and returns an empty array if the current selection is the end of the sequence.
    */
-  nextInSequence = n => {
+  nextInSequence = opt_n => {
     if (!this.sequence)
       return null;
+
+    const n = opt_n || 1;
 
     const currentIdx = this.sequence.indexOf(this.node);
     const sliceTo = Math.min(currentIdx + n + 1, this.sequence.length);
 
     const nextNodes = this.sequence.slice(currentIdx + 1, sliceTo);
-    return nextNodes.map(node => new Selection(this.store, node, this.sequence));
+    const nextSelections = nextNodes.map(node => new Selection(this.store, node, this.sequence));
+
+    return opt_n ? nextSelections : (
+      nextSelections.length > 0 ? nextSelections[0] : null
+    );
   }
 
   /** 
    * In case the selection is part of an "ordered trace" (like a TEI document),
    * this method returns the previous n selections in the trace sequence.
    * 
+   * If n is omitted, just the previous selection is returned (or null).
+   * 
    * The method returns null in case the selection is not part of an ordered trace;
    * and returns an empty array if the current selection is the start of the sequence.
    */
-  previousInSequence = n => {
+  previousInSequence = opt_n => {
     if (!this.sequence)
       return null;
+
+    const n = opt_n || 1;
 
     const currentIdx = this.sequence.indexOf(this.node);
     const sliceFrom = Math.max(0, currentIdx - n);
 
     const prevNodes = this.sequence.slice(sliceFrom, currentIdx);
-    return prevNodes.map(node => new Selection(this.store, node, this.sequence));
+    const prevSelections = prevNodes.map(node => new Selection(this.store, node, this.sequence))
+      slice().reverse(); // Reverse order!
+
+    return opt_n ? prevSelections : (
+      prevSelections.length > 0 ? prevSelections[0] : null
+    );
   }
 
 }

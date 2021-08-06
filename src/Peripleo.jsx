@@ -36,13 +36,13 @@ const PeripleoLite = () => {
   // Load status is for future use
   const [ _, setLoadStatus ] = useState('LOADING');
 
-  const [ currentTEI, setCurrentTEI ] = useState();
+  const [ currentTEI, setCurrentTEI ] = useState(null);
 
-  const [ currentTrace, setCurrentTrace ] = useState();
+  const [ currentTrace, setCurrentTrace ] = useState(null);
 
-  const [ currentSelection, setCurrentSelection ] = useState();
+  const [ currentSelection, setCurrentSelection ] = useState(null);
 
-  const [ tagFilter, setTagFilter ] = useState();
+  const [ tagFilter, setTagFilter ] = useState(null);
 
   const [ isExploreAreaEnabled, setExploreAreaEnabled ] = useState(false);
   

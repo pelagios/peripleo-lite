@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Draggable from 'react-draggable'; 
 import Switch from 'react-switch';
 import { ResizableBox } from 'react-resizable';
@@ -30,9 +30,31 @@ const TEIPanel = props => {
 
   const [ loaded, setLoaded ] = useState(false);
 
-  const [ totalAnnotations, setTotalAnnotations ] = useState();
+  const [ allAnnotations, setAllAnnotations ] = useState();
 
   const [ visibleSections, setVisibleSections ] = useState([]);
+
+  useEffect(() => {
+    const onKeydown = evt => {
+      if (props.selected) {
+        if (evt.which === 39) {
+          // If there's a next in sequence, select!
+          const next = props.selected.nextInSequence();
+          if (next)
+            props.onSelect(next);
+        } else if (evt.which === 37) {
+          // Same for prev
+          const prev = props.selected.previousInSequence();
+          if (prev)
+            props.onSelect(prev);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', onKeydown);
+
+    return () => document.removeEventListener('keydown', onKeydown);
+  }, [ props.selected, props.onSelect ]);
 
   const getSection = () => {
     const lastElem = visibleSections[visibleSections.length - 1];
@@ -44,7 +66,7 @@ const TEIPanel = props => {
   }
 
   const onLoaded = annotations => {
-    setTotalAnnotations(annotations.length);
+    setAllAnnotations(annotations);
     setLoaded(true);
     
     props.onAnnotationsLoaded(annotations);
@@ -52,7 +74,7 @@ const TEIPanel = props => {
 
   const onSelectAnnotation = annotation => {
     if (annotation) {
-      const selection = new Selection(store, annotation, totalAnnotations);
+      const selection = new Selection(store, annotation, allAnnotations);
       props.onSelect(selection);
     } else {
       props.onSelect(null);
@@ -121,7 +143,7 @@ const TEIPanel = props => {
                   </div>
 
                   <div className="p6o-tei-totals">
-                    {totalAnnotations} Annotations
+                    {allAnnotations.length} Annotations
                   </div>
                 </>
               }

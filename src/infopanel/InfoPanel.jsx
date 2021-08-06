@@ -45,7 +45,7 @@ const InfoPanel = props => {
 
     const values = (optValues || [])
       .map(objOrStr => objOrStr.url || objOrStr.toponym ?
-          ({ ...obj, dataset: props.dataset }) :
+          ({ ...objOrStr, dataset: props.dataset }) :
           ({ url: objOrStr, dataset: props.dataset }));
 
     const linkedValues = linkedPlaces.reduce((props, feature) =>
