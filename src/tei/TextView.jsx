@@ -15,6 +15,16 @@ const equalLists = (al, bl) => {
   return true;
 }
 
+/**
+ * A simple test to check if a DOM element is within the
+ * vertical bounds of the container element.
+ */
+const isInViewRange = (elem, container) => {
+  const containerBounds = container.getBoundingClientRect();
+  const { top, bottom } = elem.getBoundingClientRect();
+  return (top <= containerBounds.bottom && bottom >= containerBounds.top);
+}
+
 const TextView = props => {
 
   const elem = useRef();
@@ -53,15 +63,27 @@ const TextView = props => {
 
     // Resolve entered/left annotations from store
     const resolveAnnotations = entries => entries
-      .map(entry => store.getNode(annotationURI(entry.target)))
-      .filter(e => e); // Remove unresolved;
+      .map(entry => ({ entry, resolved: store.getNode(annotationURI(entry.target)) }))
+      .filter(e => e.resolved); // Remove unresolved;
 
     const annotationsEntered = resolveAnnotations(entriesEntered);
     const annotationsLeft = resolveAnnotations(entriesLeft);
 
+    // Poor-mans garbage collection
+    window.setTimeout(() => {
+      const garbage = annotationsEntered
+        .filter(t => !isInViewRange(t.entry.target, elem.current.parentNode));
+
+      if (garbage.length > 0 )
+        props.onAnnotationsChanged({ 
+          enteredView: [], 
+          leftView: garbage.map(t => t.resolved) 
+        });
+    }, 1000);
+
     props.onAnnotationsChanged({
-      enteredView: annotationsEntered,
-      leftView: annotationsLeft
+      enteredView: annotationsEntered.map(t => t.resolved),
+      leftView: annotationsLeft.map(t => t.resolved)
     });
   }
 
