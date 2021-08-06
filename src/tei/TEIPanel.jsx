@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Draggable from 'react-draggable'; 
 import Switch from 'react-switch';
 import { ResizableBox } from 'react-resizable';
 import { BiSpreadsheet } from 'react-icons/bi';
 
-import { StoreContext } from '../store/StoreContext';
-import Selection from '../Selection';
 import TraceView from '../traces/TraceView';
 import TextView from './TextView';
 import Histogram from './Histogram';
@@ -26,35 +24,11 @@ const DEFAULT_HEIGHT = 660;
  */
 const TEIPanel = props => {
 
-  const { store } = useContext(StoreContext);
-
   const [ loaded, setLoaded ] = useState(false);
 
-  const [ allAnnotations, setAllAnnotations ] = useState();
+  const [ totalAnnotations, setTotalAnnotations ] = useState();
 
   const [ visibleSections, setVisibleSections ] = useState([]);
-
-  useEffect(() => {
-    const onKeydown = evt => {
-      if (props.selected) {
-        if (evt.which === 39) {
-          // If there's a next in sequence, select!
-          const next = props.selected.nextInSequence();
-          if (next)
-            props.onSelect(next);
-        } else if (evt.which === 37) {
-          // Same for prev
-          const prev = props.selected.previousInSequence();
-          if (prev)
-            props.onSelect(prev);
-        }
-      }
-    };
-
-    document.addEventListener('keydown', onKeydown);
-
-    return () => document.removeEventListener('keydown', onKeydown);
-  }, [ props.selected, props.onSelect ]);
 
   const getSection = () => {
     const lastElem = visibleSections[visibleSections.length - 1];
@@ -84,19 +58,10 @@ const TEIPanel = props => {
   }
 
   const onLoaded = annotations => {
-    setAllAnnotations(annotations);
+    setTotalAnnotations(annotations.length);
     setLoaded(true);
     
     props.onAnnotationsLoaded(annotations);
-  }
-
-  const onSelectAnnotation = annotation => {
-    if (annotation) {
-      const selection = new Selection(store, annotation, allAnnotations);
-      props.onSelect(selection);
-    } else {
-      props.onSelect(null);
-    }
   }
 
   return (
@@ -136,7 +101,7 @@ const TEIPanel = props => {
               data={props.data} 
               onLoaded={onLoaded} 
               selected={props.selected}
-              onSelectAnnotation={onSelectAnnotation}
+              onSelectAnnotation={props.onSelectAnnotation}
               onAnnotationsChanged={props.onAnnotationsChanged} 
               onSectionsChanged={sections => setVisibleSections(sections)} />
           </main>
@@ -163,7 +128,7 @@ const TEIPanel = props => {
                   </div>
 
                   <div className="p6o-tei-totals">
-                    {allAnnotations.length.toLocaleString('en')} Annotations
+                    {totalAnnotations.toLocaleString('en')} Annotations
                   </div>
                 </>
               }
@@ -188,13 +153,13 @@ const TEIPanel = props => {
     <TraceView 
       filter={props.filter}
       defaultShowAll={true}
+      selected={props.selected}
+      onSelect={props.onSelect}
       onAnnotationsChanged={props.onAnnotationsChanged}>
 
       <TEIPanel 
         data={props.data}
-        filter={props.filter}
-        selected={props.selected}
-        onSelect={props.onSelect} />
+        filter={props.filter} />
     </TraceView>
   )
 

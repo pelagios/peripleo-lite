@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 
+import { StoreContext } from '../store/StoreContext';
+import Selection from '../Selection';
+
 export default class TraceView extends Component {
+
+  static contextType = StoreContext;
 
   constructor(props) {
     super(props);
@@ -23,6 +28,26 @@ export default class TraceView extends Component {
     this.props.onAnnotationsChanged(filtered);
   }
 
+  componentDidMount() {
+    this.onKeyDown = evt => {
+      if (this.props.selected) {
+        if (evt.which === 39) {
+          // If there's a next in sequence, select!
+          const next = this.props.selected.nextInSequence();
+          if (next)
+            this.props.onSelect(next);
+        } else if (evt.which === 37) {
+          // Same for prev
+          const prev = this.props.selected.previousInSequence();
+          if (prev)
+            this.props.onSelect(prev);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', this.onKeyDown);
+  }
+
   /** Re-apply filter when it changes **/
   componentWillReceiveProps(next) {
     if (this.props.filter !== next.filter) {
@@ -33,6 +58,10 @@ export default class TraceView extends Component {
     }
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.onKeyDown);
+  }
+  
   onAnnotationsLoaded = allAnnotations => {
     this.setState({ allAnnotations }, () => {
       if (this.state.showAll)
@@ -52,6 +81,15 @@ export default class TraceView extends Component {
     });
   }
 
+  onSelectAnnotation = annotation => {
+    if (annotation) {
+      const selection = new Selection(this.context.store, annotation, this.state.allAnnotations);
+      this.props.onSelect(selection);
+    } else {
+      this.props.onSelect(null);
+    }
+  }
+
   onShowAll = showAll => {
     this.setState({ showAll }, () => {
       if (showAll)
@@ -65,6 +103,8 @@ export default class TraceView extends Component {
     return React.Children.map(this.props.children, child =>
       React.cloneElement(child, { 
         showAll: this.state.showAll,
+        selected: this.props.selected,
+        onSelectAnnotation: this.onSelectAnnotation,
         onAnnotationsLoaded: this.onAnnotationsLoaded,
         onAnnotationsChanged: this.onAnnotationsChanged,
         onShowAll: this.onShowAll
