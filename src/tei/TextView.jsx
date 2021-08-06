@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import CETEIcean from 'CETEIcean';
 
 import { StoreContext } from '../store/StoreContext';
-import Selection from '../Selection';
 
 /** Helper to compare sets by value **/
 const equalLists = (al, bl) => {
@@ -120,14 +119,8 @@ const TextView = props => {
   useEffect(() => 
     props.onSectionsChanged(visibleSections), [ visibleSections ]);
 
-  const onClick = evt => {
-    const annotation = store.getNode(annotationURI(evt.target));
-
-    if (annotation)
-      props.onSelect(new Selection(annotation, store));
-    else 
-      props.onSelect(null);
-  }
+  const onClick = evt =>
+    props.onSelectAnnotation(store.getNode(annotationURI(evt.target)));
 
   return (
     <div 

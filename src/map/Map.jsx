@@ -83,7 +83,7 @@ const Map = props => {
   }, [ props.selected ]);
 
   const onMouseDown = () => hover ? 
-    props.onSelect(new Selection(store.getNode(hover.feature.properties.id), store)) : 
+    props.onSelect(new Selection(store, store.getNode(hover.feature.properties.id))) : 
     props.onSelect(null);
 
   const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'

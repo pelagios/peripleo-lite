@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Draggable from 'react-draggable'; 
 import Switch from 'react-switch';
 import { ResizableBox } from 'react-resizable';
 import { BiSpreadsheet } from 'react-icons/bi';
 
+import { StoreContext } from '../store/StoreContext';
+import Selection from '../Selection';
 import TraceView from '../traces/TraceView';
 import TextView from './TextView';
 import Histogram from './Histogram';
@@ -23,6 +25,8 @@ const DEFAULT_HEIGHT = 660;
  * reflow.
  */
 const TEIPanel = props => {
+
+  const { store } = useContext(StoreContext);
 
   const [ loaded, setLoaded ] = useState(false);
 
@@ -44,6 +48,15 @@ const TEIPanel = props => {
     setLoaded(true);
     
     props.onAnnotationsLoaded(annotations);
+  }
+
+  const onSelectAnnotation = annotation => {
+    if (annotation) {
+      const selection = new Selection(store, annotation, totalAnnotations);
+      props.onSelect(selection);
+    } else {
+      props.onSelect(null);
+    }
   }
 
   return (
@@ -83,7 +96,7 @@ const TEIPanel = props => {
               data={props.data} 
               onLoaded={onLoaded} 
               selected={props.selected}
-              onSelect={props.onSelect}
+              onSelectAnnotation={onSelectAnnotation}
               onAnnotationsChanged={props.onAnnotationsChanged} 
               onSectionsChanged={sections => setVisibleSections(sections)} />
           </main>
