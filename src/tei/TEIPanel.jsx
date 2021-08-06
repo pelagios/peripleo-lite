@@ -65,6 +65,24 @@ const TEIPanel = props => {
     return lastChapter + '.' + lastSection;
   }
 
+  const onJumpToSection = () => {
+    const str = window.prompt('Jump to section', 'E.g. 4.3');
+
+    const isValid = /^\d+\.\d+$/.test(str);
+    if (isValid) {
+      const [ chapter, section ] = str.split('.');
+
+      const chapterElem = document.querySelector(`tei-div[subtype="chapter"][n="${chapter}"]`);
+      if (chapterElem) {
+        const sectionElem = chapterElem.querySelector(`tei-div[subtype="section"][n="${section}"]`);
+        if (sectionElem)
+          sectionElem.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      alert('Invalid section');
+    }
+  }
+
   const onLoaded = annotations => {
     setAllAnnotations(annotations);
     setLoaded(true);
@@ -136,7 +154,9 @@ const TEIPanel = props => {
               {visibleSections.length > 0 &&
                 <>
                   <div className="p6o-tei-section-picker">
-                    <span className="p6o-tei-current-section">
+                    <span
+                      className="p6o-tei-current-section"
+                      onClick={onJumpToSection}>
                       <label>Section {getSection()}</label>
                       <span className="icon"><BiSpreadsheet /></span>
                     </span>
