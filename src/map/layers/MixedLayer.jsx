@@ -22,8 +22,20 @@ const MixedLayer = props => {
 
   const points = shapesToCentroids ? 
     // Convert shapes to centroid if needed..
-    features.map(f => f.geometry.type === 'Point' ? 
-      f : {...f, ...{ geometry: centroid(f).geometry }}) :
+    features.map(f => { 
+
+      if (f.geometry.type === 'Point') {
+        return f;
+      // Dealing with the peculiarities of the J. Binder gazetteer
+      } else if (f.geometry.type === 'GeometryCollection' && f.geometry.geometries.length === 1 && f.geometry.geometries[0].type === 'Point') {
+        return { ...f, ...{ geometry: {
+          type: 'Point',
+          coordinates: f.geometry.geometries[0].coordinates
+        }}};
+      } else {
+        return {...f, ...{ geometry: centroid(f).geometry }}
+      }
+    }) :
 
     // ...or filter
     features.filter(f => f.geometry.type === 'Point');
