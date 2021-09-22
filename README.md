@@ -1,6 +1,8 @@
 # Peripleo Lite
 
-A JavaScript viewer for geospatial linked data. __Work in progress!__
+A JavaScript viewer for geospatial linked data.
+
+![Peripleo UI screencast](screencast.gif)
 
 ## Setup and build
 
