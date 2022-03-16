@@ -77,7 +77,7 @@ const Map = props => {
     props.onSelect(new Selection(store, store.getNode(hover.feature.properties.id))) : 
     props.onSelect(null);
 
-  const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=FZebSVZUiIemGD0m8ayh'
+  const style = 'https://api.maptiler.com/maps/outdoor/style.json?key=UnVjuVkOqMcEcZwslqSt'
   // const style = 'https://klokantech.github.io/roman-empire/style.json'
 
   return (  
